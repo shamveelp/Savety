@@ -82,36 +82,81 @@
   font-weight: 700;
 }
 
-.nav-user {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+.nav-user-dropdown {
+  position: relative;
 }
 
-.username {
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f0f0;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 14px;
   color: var(--text-main);
-  background: #f0f0f0;
-  padding: 4px 12px;
-  border-radius: 999px;
-}
-
-.logout-btn {
-  font-size: 12px;
-  font-weight: 600;
-  color: #ff4d4f;
-  background: none;
-  border: none;
   cursor: pointer;
-  padding: 0;
-  opacity: 0.8;
-  transition: opacity 0.2s;
+  transition: all 0.2s ease;
 }
 
-.logout-btn:hover {
-  opacity: 1;
-  text-decoration: underline;
+.user-btn:hover, .user-btn.active {
+  background: #e5e5e5;
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevron.rotate {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 180px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1001;
+  overflow: hidden;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  border-radius: 8px;
+  transition: background 0.2s;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f7;
+}
+
+.dropdown-item.logout {
+  color: #ff4d4f;
+  margin-top: 4px;
+  border-top: 1px solid #f0f0f0;
+  border-radius: 0 0 8px 8px;
 }
 
 @media (max-width: 768px) {

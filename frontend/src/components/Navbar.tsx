@@ -4,6 +4,7 @@ import './Navbar.css'
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,6 +21,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('user')
     setUser(null)
+    setIsDropdownOpen(false)
     navigate('/login')
   }
 
@@ -43,9 +45,23 @@ const Navbar = () => {
           <span>25k</span>
         </a>
         {user ? (
-          <div className="nav-user">
-            <span className="username">@{user.username}</span>
-            <button onClick={handleLogout} className="logout-btn">Logout</button>
+          <div className="nav-user-dropdown">
+            <button 
+              className={`user-btn ${isDropdownOpen ? 'active' : ''}`}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <span>@{user.username}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`chevron ${isDropdownOpen ? 'rotate' : ''}`}>
+                <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {isDropdownOpen && (
+              <div className="dropdown-menu">
+                <Link to="/profile" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>Profile</Link>
+                <Link to="/settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>Settings</Link>
+                <button onClick={handleLogout} className="dropdown-item logout">Logout</button>
+              </div>
+            )}
           </div>
         ) : (
           <Link to="/signup" className="btn btn-primary small">Sign up</Link>
