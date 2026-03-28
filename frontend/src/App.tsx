@@ -1,6 +1,7 @@
 import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import FAQ from './components/FAQ'
 
 // Hero Showcase Assets
 import photo1 from './assets/showcase/photo1.png'
@@ -197,6 +198,7 @@ function App() {
           </div>
         </div>
       </main>
+      <FAQ />
       <Footer />
     </div>
   )
