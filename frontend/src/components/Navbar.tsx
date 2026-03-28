@@ -1,17 +1,18 @@
+import { Link } from 'react-router-dom'
 import './Navbar.css'
 
 const Navbar = () => {
   return (
     <nav className="floating-navbar">
       <div className="nav-left">
-        <a href="/" className="logo">savety</a>
+        <Link to="/" className="logo">savety</Link>
       </div>
       <div className="nav-center">
-        <a href="/pricing">Pricing</a>
-        <a href="/blog">Blog</a>
-        <a href="/about">About</a>
-        <a href="/download">Download</a>
-        <a href="/help">Help</a>
+        <Link to="/pricing">Pricing</Link>
+        <Link to="/blog">Blog</Link>
+        <Link to="/about">About</Link>
+        <Link to="/download">Download</Link>
+        <Link to="/help">Help</Link>
       </div>
       <div className="nav-right">
         <a href="https://github.com/savety" target="_blank" rel="noopener noreferrer" className="github-link">
@@ -20,7 +21,7 @@ const Navbar = () => {
           </svg>
           <span>25k</span>
         </a>
-        <button className="btn btn-primary small">Sign up</button>
+        <Link to="/signup" className="btn btn-primary small">Sign up</Link>
       </div>
     </nav>
   )
