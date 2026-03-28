@@ -51,7 +51,7 @@ function Home() {
         </p>
         <div className="hero-buttons">
           {user ? (
-            <Link to="/dashboard" className="btn btn-primary btn-upload">
+            <Link to="/upload" className="btn btn-primary btn-upload">
               <svg 
                 width="20" 
                 height="20" 
