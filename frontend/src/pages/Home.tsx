@@ -43,15 +43,30 @@ function Home() {
     <div className="landing-page">
       <main className="hero-section">
         <h1 className="hero-title">
-          <span className="text-green">Safe home</span> <br />
-          <span className="text-dark">for your photos</span>
+          <span className="text-green">Preserve your story.</span> <br />
+          <span className="text-dark">Share with a Scan.</span>
         </h1>
         <p className="hero-subtitle">
-          End-to-end encrypted. Cross-platform. Open-source.
+          Bulk upload your memories, drag & drop to rearrange, and generate instant QR codes for public sharing. Your life, organized and shareable.
         </p>
         <div className="hero-buttons">
           {user ? (
-            <Link to="/dashboard" className="btn btn-primary">Get Started</Link>
+            <Link to="/dashboard" className="btn btn-primary btn-upload">
+              <svg 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                style={{ marginRight: '10px' }}
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              Upload
+            </Link>
           ) : (
             <>
               <Link to="/signup" className="btn btn-primary">Sign up</Link>

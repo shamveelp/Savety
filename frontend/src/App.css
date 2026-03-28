@@ -63,37 +63,69 @@
   }
 }
 
-/* Button styles */
 .btn {
-  padding: 18px 36px;
-  border-radius: 999px;
-  font-size: 18px;
+  border-radius: 100px;
   font-weight: 600;
   transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  border: none;
+  text-decoration: none;
 }
 
 .btn-primary {
-  background-color: var(--dark);
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background-color: #333;
-  transform: translateY(-1px);
+  background-color: #1a1a1a !important;
+  color: #fff !important;
 }
 
 .btn-secondary {
-  background-color: var(--light);
-  color: var(--text-main);
+  background-color: #f5f5f5 !important;
+  color: #1a1a1a !important;
+}
+
+.btn-primary:hover {
+  background-color: #333 !important;
 }
 
 .btn-secondary:hover {
-  background-color: #ebebeb;
-  transform: translateY(-1px);
+  background-color: #eeeeee !important;
+}
+
+/* Hero Section Specific Proportions */
+.hero-buttons .btn {
+  padding: 20px 50px;
+  font-size: 18px;
+}
+
+/* Upload Button Specialized Design */
+.btn-upload {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg, 
+    #1a1a1a 0%, 
+    #333333 50%, 
+    #1a1a1a 100%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shine 3s infinite linear !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.btn-upload:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
 }
 
 .btn.small {
-  padding: 10px 20px;
+  padding: 12px 28px;
   font-size: 15px;
 }
 
@@ -101,6 +133,7 @@
   display: flex;
   gap: 16px;
   margin-bottom: 80px;
+  justify-content: center;
 }
 
 /* Photo Showcase Styles */
