@@ -57,12 +57,22 @@ function App() {
           </div>
         </div>
 
-        <div className="brand-logos">
-          <div className="brand-logo android">ANDROID AUTHORITY</div>
-          <div className="brand-logo caschys">CASCHYS BLOG</div>
-          <div className="brand-logo clubic">clubic</div>
-          <div className="brand-logo degoogle">r/degoogle</div>
-          <div className="brand-logo privacy">Privacy Guides</div>
+        <div className="brand-ticker">
+          <div className="ticker-track">
+            <a href="https://shamveelp.xyz" target="_blank" rel="noopener noreferrer"><span>Shamveel P</span></a>
+            <a href="https://www.youtube.com/@CodingAashan" target="_blank" rel="noopener noreferrer"><span>Coding Aashan</span></a>
+            <a href="https://www.instagram.com/mangadome/" target="_blank" rel="noopener noreferrer"><span>MangaDome</span></a>
+            <a href="https://chainverse.shamveelp.xyz/" target="_blank" rel="noopener noreferrer"><span>ChainVerse</span></a>
+            <a href="https://getter.shamveelp.xyz/" target="_blank" rel="noopener noreferrer"><span>Getter</span></a>
+            <a href="https://pc-monarch.shamveelp.xyz/" target="_blank" rel="noopener noreferrer"><span>PC Monarch</span></a>
+            {/* Duplicate for seamless loop */}
+            <a href="https://shamveelp.xyz" target="_blank" rel="noopener noreferrer"><span>Shamveel P</span></a>
+            <a href="https://www.youtube.com/@CodingAashan" target="_blank" rel="noopener noreferrer"><span>Coding Aashan</span></a>
+            <a href="https://www.instagram.com/mangadome/" target="_blank" rel="noopener noreferrer"><span>MangaDome</span></a>
+            <a href="https://chainverse.shamveelp.xyz/" target="_blank" rel="noopener noreferrer"><span>ChainVerse</span></a>
+            <a href="https://getter.shamveelp.xyz/" target="_blank" rel="noopener noreferrer"><span>Getter</span></a>
+            <a href="https://pc-monarch.shamveelp.xyz/" target="_blank" rel="noopener noreferrer"><span>PC Monarch</span></a>
+          </div>
         </div>
 
         <div className="features-grid">
