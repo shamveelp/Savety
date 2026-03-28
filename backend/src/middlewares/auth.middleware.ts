@@ -30,3 +30,20 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     res.status(401).json({ message: 'Unauthorized access.' });
   }
 };
+
+export const optionalAuthMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const jwtService = container.get<IJWTService>(TYPES.JWTService);
+      const decoded = jwtService.verifyToken(token);
+      if (decoded) {
+        (req as any).user = decoded;
+      }
+    }
+    next();
+  } catch (error) {
+    next();
+  }
+};

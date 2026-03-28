@@ -6,6 +6,7 @@ import Signup from './pages/Signup'
 import OTPVerification from './pages/OTPVerification'
 import ForgotPassword from './pages/ForgotPassword'
 import Profile from './pages/Profile'
+import Gallery from './pages/Gallery'
 import ChangePassword from './pages/ChangePassword'
 import Upload from './pages/Upload'
 import UploadDetail from './pages/UploadDetail'
@@ -29,6 +30,7 @@ function App() {
 
         {/* User Protected Routes */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/gallery" element={<ProtectedRoute><Gallery /></ProtectedRoute>} />
         <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
         <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
         <Route path="/upload/:id" element={<ProtectedRoute><UploadDetail /></ProtectedRoute>} />

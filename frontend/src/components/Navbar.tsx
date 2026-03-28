@@ -45,7 +45,7 @@ const Navbar = () => {
       </div>
       <div className="nav-center">
         <Link to="/pricing">Pricing</Link>
-        <Link to="/blog">Blog</Link>
+        <Link to="/gallery">My Gallery</Link>
         <Link to="/about">About</Link>
         <Link to="/download">Download</Link>
         <Link to="/help">Help</Link>

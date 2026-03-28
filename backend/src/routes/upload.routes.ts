@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Container } from 'inversify';
 import { IUploadController } from '../interfaces/upload.controller.interface';
 import { TYPES } from '../core/types';
-import { authMiddleware } from '../middlewares/auth.middleware';
+import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.middleware';
 import { upload as multerUpload } from '../middlewares/upload.middleware';
 
 export const setupUploadRoutes = (container: Container): Router => {
@@ -16,7 +16,7 @@ export const setupUploadRoutes = (container: Container): Router => {
   router.get('/', authMiddleware, (req, res) => uploadController.list(req, res));
 
   // Public/Protected: Details of a specific upload (internally handled visibility)
-  router.get('/:id', (req, res) => uploadController.details(req, res));
+  router.get('/:id', optionalAuthMiddleware, (req, res) => uploadController.details(req, res));
 
   // Protected: Remove upload
   router.delete('/:id', authMiddleware, (req, res) => uploadController.remove(req, res));
