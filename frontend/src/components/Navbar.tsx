@@ -71,7 +71,6 @@ const Navbar = () => {
             {isDropdownOpen && (
               <div className="dropdown-menu">
                 <Link to="/profile" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>Profile</Link>
-                <Link to="/settings" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>Settings</Link>
                 <button onClick={handleLogout} className="dropdown-item logout">Logout</button>
               </div>
             )}

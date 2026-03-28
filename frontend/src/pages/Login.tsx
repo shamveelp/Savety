@@ -82,6 +82,9 @@ const Login = () => {
               </button>
             </div>
             {errors.password && <span className="error-text">{errors.password.message}</span>}
+            <Link to="/forgot-password" style={{ fontSize: '13px', color: 'var(--primary-green)', textAlign: 'right', display: 'block', marginTop: '4px', fontWeight: 'bold' }}>
+              Forgot password?
+            </Link>
           </div>
           <button type="submit" className="btn-auth" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}

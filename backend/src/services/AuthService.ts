@@ -4,7 +4,7 @@ import { IAuthService } from '../interfaces/auth.service.interface';
 import { IUserRepository } from '../interfaces/user.repository.interface';
 import { IMailService } from '../interfaces/mail.service.interface';
 import { IJWTService } from '../interfaces/jwt.service.interface';
-import { SignupRequestDTO, LoginRequestDTO, OTPVerifyRequestDTO, AuthResponseDTO } from '../dtos/auth.dto';
+import { SignupRequestDTO, LoginRequestDTO, OTPVerifyRequestDTO, AuthResponseDTO, ResetPasswordRequestDTO } from '../dtos/auth.dto';
 import { TYPES } from '../core/types';
 
 @injectable()
@@ -28,9 +28,8 @@ export class AuthService implements IAuthService {
 
     const hashedPassword = await bcrypt.hash(signupData.password, 12);
     
-    // Generate 6 digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); 
 
     await this.userRepository.create({
       username: signupData.username,
@@ -95,5 +94,40 @@ export class AuthService implements IAuthService {
       username: user.username,
       token
     };
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new Error('User with this email does not exist.');
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+    await this.userRepository.update((user as any)._id, {
+      otp,
+      otpExpires
+    });
+
+    await this.mailService.sendOTP(email, otp);
+  }
+
+  async resetPassword(resetData: ResetPasswordRequestDTO): Promise<void> {
+    const user = await this.userRepository.findByEmail(resetData.email);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    if (user.otp !== resetData.otp || !user.otpExpires || user.otpExpires < new Date()) {
+      throw new Error('Invalid or expired OTP.');
+    }
+
+    const hashedPassword = await bcrypt.hash(resetData.newPassword, 12);
+
+    await this.userRepository.update((user as any)._id, {
+      password: hashedPassword,
+      $unset: { otp: "", otpExpires: "" }
+    });
   }
 }

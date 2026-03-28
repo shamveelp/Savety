@@ -20,3 +20,8 @@ export interface AuthResponseDTO {
   username: string;
   token?: string;
 }
+export interface ResetPasswordRequestDTO {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
