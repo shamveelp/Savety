@@ -121,6 +121,44 @@
   text-decoration: underline;
 }
 
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 54px; /* Space for the eye icon */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  background: rgba(0,0,0,0.03);
+  color: var(--text-main);
+}
+
+.password-toggle:focus {
+  outline: none;
+  background: rgba(0,0,0,0.05);
+}
+
 @media (max-width: 480px) {
   .auth-card {
     padding: 40px 24px;

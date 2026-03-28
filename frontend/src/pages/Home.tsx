@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import '../App.css'
-import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import FAQ from '../components/FAQ'
 
@@ -26,10 +26,21 @@ import avatar2 from '../assets/reviews/avatar2.png'
 import avatar3 from '../assets/reviews/avatar3.png'
 
 function Home() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error("Invalid session", e);
+      }
+    }
+  }, []);
+
   return (
     <div className="landing-page">
-      <Navbar />
-
       <main className="hero-section">
         <h1 className="hero-title">
           <span className="text-green">Safe home</span> <br />
@@ -39,8 +50,14 @@ function Home() {
           End-to-end encrypted. Cross-platform. Open-source.
         </p>
         <div className="hero-buttons">
-          <Link to="/signup" className="btn btn-primary">Sign up</Link>
-          <Link to="/login" className="btn btn-secondary">Login</Link>
+          {user ? (
+            <Link to="/dashboard" className="btn btn-primary">Get Started</Link>
+          ) : (
+            <>
+              <Link to="/signup" className="btn btn-primary">Sign up</Link>
+              <Link to="/login" className="btn btn-secondary">Login</Link>
+            </>
+          )}
         </div>
 
         <div className="photo-showcase">

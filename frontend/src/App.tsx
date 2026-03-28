@@ -10,7 +10,7 @@ import PublicRoute from './components/layout/PublicRoute'
 function App() {
   return (
     <Router>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

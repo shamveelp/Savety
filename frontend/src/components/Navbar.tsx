@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Navbar.css'
 
@@ -6,6 +6,7 @@ const Navbar = () => {
   const [user, setUser] = useState<any>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const navigate = useNavigate()
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
@@ -15,6 +16,18 @@ const Navbar = () => {
       } catch (e) {
         console.error("Parse error", e)
       }
+    }
+
+    // Click outside listener
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
 
@@ -45,7 +58,7 @@ const Navbar = () => {
           <span>25k</span>
         </a>
         {user ? (
-          <div className="nav-user-dropdown">
+          <div className="nav-user-dropdown" ref={dropdownRef}>
             <button 
               className={`user-btn ${isDropdownOpen ? 'active' : ''}`}
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
