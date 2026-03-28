@@ -1,5 +1,6 @@
 import './App.css'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
 // Hero Showcase Assets
 import photo1 from './assets/showcase/photo1.png'
@@ -179,7 +180,24 @@ function App() {
             <div className="yellow-curve"></div>
           </div>
         </div>
+        <div className="memories-counter-section">
+          <div className="memories-heading">
+            <span className="heart-icon">💚</span>
+            <h2>memories <br /> <span>preserved</span></h2>
+          </div>
+          <div className="counter-display">
+            <div className="chick-mascot">
+              <img src="/assets/memories.png" alt="Mascot" />
+            </div>
+            <div className="number-box-container">
+               <div className="number-box">
+                <span>549,277,360</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
+      <Footer />
     </div>
   )
 }
