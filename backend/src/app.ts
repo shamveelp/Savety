@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import logger from "./utils/logger";
 import userRoutes from "./routes/userRoutes";
+import { setupUploadRoutes } from "./routes/upload.routes";
+import { container } from "./core/container";
 
 // Load environment variables
 dotenv.config();
@@ -42,6 +44,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 // API Routes
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/uploads", setupUploadRoutes(container));
 
 // Basic Welcome Route
 app.get("/", (req: Request, res: Response) => {

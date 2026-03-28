@@ -8,6 +8,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import Profile from './pages/Profile'
 import ChangePassword from './pages/ChangePassword'
 import Upload from './pages/Upload'
+import UploadDetail from './pages/UploadDetail'
 import Navbar from './components/Navbar'
 import PublicRoute from './components/layout/PublicRoute'
 import ProtectedRoute from './components/layout/ProtectedRoute'
@@ -30,6 +31,7 @@ function App() {
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
         <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+        <Route path="/upload/:id" element={<ProtectedRoute><UploadDetail /></ProtectedRoute>} />
       </Routes>
     </Router>
   )

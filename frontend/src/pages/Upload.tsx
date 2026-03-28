@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import './Upload.css'
+import { uploadMemories } from '../services/user/userUploadApiServices'
 
 const Upload = () => {
   const [title, setTitle] = useState('')
@@ -24,13 +25,14 @@ const Upload = () => {
   }
 
   const removeFile = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index))
-    setPreviews((prev) => {
-      const updated = prev.filter((_, i) => i !== index)
-      // Clean up the URL object for the removed file
-      URL.revokeObjectURL(prev[index])
-      return updated
-    })
+    const updatedFiles = [...files]
+    updatedFiles.splice(index, 1)
+    setFiles(updatedFiles)
+
+    const updatedPreviews = [...previews]
+    URL.revokeObjectURL(updatedPreviews[index])
+    updatedPreviews.splice(index, 1)
+    setPreviews(updatedPreviews)
   }
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -39,12 +41,21 @@ const Upload = () => {
     
     setLoading(true)
     try {
-      // API call placeholder
-      console.log({ title, description, visibility, files })
-      toast.success('Photos uploaded successfully!')
+      const formData = new FormData()
+      formData.append('title', title)
+      formData.append('description', description)
+      formData.append('visibility', visibility)
+      
+      files.forEach((file) => {
+        formData.append('images', file)
+      })
+
+      await uploadMemories(formData)
+      toast.success('Memories preserved successfully!')
       navigate('/')
     } catch (error: any) {
-      toast.error('Upload failed. Please try again.')
+      console.error("Upload error", error);
+      toast.error(error.response?.data?.message || 'Upload failed. Please try again.')
     } finally {
       setLoading(false)
     }
