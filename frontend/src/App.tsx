@@ -17,6 +17,11 @@ import mountainImg from './assets/features/mountain.png'
 import babyImg from './assets/features/baby.png'
 import familyImg from './assets/features/family.png'
 
+// Review Assets
+import avatar1 from './assets/reviews/avatar1.png'
+import avatar2 from './assets/reviews/avatar2.png'
+import avatar3 from './assets/reviews/avatar3.png'
+
 function App() {
   return (
     <div className="landing-page">
@@ -124,6 +129,54 @@ function App() {
             <div className="card-content">
               <img src={familyImg} alt="Family illustration" className="family-illustration" />
             </div>
+          </div>
+        </div>
+
+        <div className="reviews-section">
+          <h1 className="reviews-title">reviews.</h1>
+          <div className="reviews-container">
+            <div className="cards-scroll">
+              <div className="review-card card-small">
+                <div className="review-header">
+                  <div className="avatar-box"><img src={avatar1} alt="Rume" /></div>
+                  <div className="reviewer-info">
+                    <h3>Rume</h3>
+                    <div className="stars">★★★★★</div>
+                  </div>
+                </div>
+                <p className="review-text">I really love your product</p>
+                <div className="quote-icon">“</div>
+              </div>
+
+              <div className="review-card card-large">
+                <div className="review-header">
+                  <div className="avatar-box"><img src={avatar2} alt="Pietro Smusi" /></div>
+                  <div className="reviewer-info">
+                    <h3>Pietro Smusi</h3>
+                    <div className="stars">★★★★★</div>
+                  </div>
+                </div>
+                <p className="review-text">
+                  I like ente, I have been using it instead of google photos for almost a year and I have never regret it. A few euros yearly for a privacy-respecting alternative that does what it is supposed to do smoothly and simply is a big yes from me.
+                </p>
+                <div className="quote-icon">“</div>
+              </div>
+
+              <div className="review-card card-medium">
+                <div className="review-header">
+                  <div className="avatar-box"><img src={avatar3} alt="p0x" /></div>
+                  <div className="reviewer-info">
+                    <h3>p0x</h3>
+                    <div className="stars">★★★★★</div>
+                  </div>
+                </div>
+                <p className="review-text">
+                  they don't market as much as they should but it's a great google photos alternative. it's open source too.
+                </p>
+                <div className="quote-icon">“</div>
+              </div>
+            </div>
+            <div className="yellow-curve"></div>
           </div>
         </div>
       </main>
