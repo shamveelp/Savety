@@ -1,7 +1,28 @@
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import './Navbar.css'
 
 const Navbar = () => {
+  const [user, setUser] = useState<any>(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (e) {
+        console.error("Parse error", e)
+      }
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    setUser(null)
+    navigate('/login')
+  }
+
   return (
     <nav className="floating-navbar">
       <div className="nav-left">
@@ -21,7 +42,14 @@ const Navbar = () => {
           </svg>
           <span>25k</span>
         </a>
-        <Link to="/signup" className="btn btn-primary small">Sign up</Link>
+        {user ? (
+          <div className="nav-user">
+            <span className="username">@{user.username}</span>
+            <button onClick={handleLogout} className="logout-btn">Logout</button>
+          </div>
+        ) : (
+          <Link to="/signup" className="btn btn-primary small">Sign up</Link>
+        )}
       </div>
     </nav>
   )

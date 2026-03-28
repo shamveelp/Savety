@@ -1,22 +1,17 @@
-import dotenv from "dotenv";
+import mongoose from "mongoose";
 import logger from "../utils/logger";
-
-dotenv.config();
 
 export const connectDB = async () => {
   try {
-    // This is a placeholder for your DB connection.
-    // Replace with your DB driver's connection logic (e.g., Mongoose, Sequelize, or PG-Client)
+    const dbUrl = process.env.DATABASE_URL;
     
-    const dbUrl = process.env.DATABASE_URL || "null";
-    
-    if (dbUrl === "null") {
-        logger.warn("No DATABASE_URL set. Running in development mode without DB persistence.");
-        return;
+    if (!dbUrl) {
+        logger.error("No DATABASE_URL set in environment variables.");
+        process.exit(1);
     }
 
-    logger.info(`Connecting to database at: ${dbUrl}`);
-    // await mongoose.connect(dbUrl); // Example for Mongoose
+    logger.info(`Attempting to connect to database...`);
+    await mongoose.connect(dbUrl);
     
     logger.info("🔥 Database connection established successfully!");
   } catch (error) {
@@ -24,4 +19,3 @@ export const connectDB = async () => {
     process.exit(1);
   }
 };
-

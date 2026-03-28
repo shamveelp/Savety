@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import logger from "./utils/logger";
+import userRoutes from "./routes/userRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -20,7 +21,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 
 // Dynamic CORS for multiple origins
-const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : ["http://localhost:3000"];
+const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : ["http://localhost:5173"];
 app.use(cors({
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -37,6 +38,10 @@ app.get("/health", (req: Request, res: Response) => {
     service: "savety-api"
   });
 });
+
+
+// API Routes
+app.use("/api/v1/user", userRoutes);
 
 // Basic Welcome Route
 app.get("/", (req: Request, res: Response) => {

@@ -82,6 +82,38 @@
   font-weight: 700;
 }
 
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.username {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-main);
+  background: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.logout-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff4d4f;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.logout-btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .nav-center {
     display: none;
