@@ -44,11 +44,11 @@ const Navbar = () => {
         <Link to="/" className="logo">savety</Link>
       </div>
       <div className="nav-center">
-        <Link to="/pricing">Pricing</Link>
         <Link to="/gallery">My Gallery</Link>
+        <Link to="/">Explore</Link>
+        <Link to="/pricing">Pricing</Link>
+        <Link to="/upload">Upload</Link>
         <Link to="/about">About</Link>
-        <Link to="/download">Download</Link>
-        <Link to="/help">Help</Link>
       </div>
       <div className="nav-right">
         <a href="https://github.com/savety" target="_blank" rel="noopener noreferrer" className="github-link">
