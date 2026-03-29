@@ -12,6 +12,8 @@ import Upload from './pages/Upload'
 import UploadDetail from './pages/UploadDetail'
 import Explore from './pages/Explore'
 import PublicProfile from './pages/PublicProfile'
+import Pricing from './pages/Pricing'
+import About from './pages/About'
 import Navbar from './components/Navbar'
 import PublicRoute from './components/layout/PublicRoute'
 import ProtectedRoute from './components/layout/ProtectedRoute'
@@ -24,6 +26,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/about" element={<About />} />
         <Route path="/profile/:userId" element={<PublicProfile />} />
         
         {/* Auth Routes */}

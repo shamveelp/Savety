@@ -1,0 +1,207 @@
+.about-page {
+    min-height: 100vh;
+    padding-top: 150px;
+    padding-bottom: 100px;
+    background: #ffffff;
+    color: #1a1a1a;
+}
+
+.about-container {
+    max-width: 1000px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.about-hero {
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+.about-hero .title {
+    font-size: 5rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    letter-spacing: -3.5px;
+    font-family: var(--font-heading);
+}
+
+.about-hero .subtitle {
+    font-size: 1.6rem;
+    color: #666;
+    max-width: 650px;
+    margin: 0 auto;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.about-mission {
+    margin-bottom: 100px;
+}
+
+.about-mission .card {
+    background: #fbfbfb;
+    border: 1.5px solid #efefef;
+    border-radius: 40px;
+    padding: 60px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.03);
+}
+
+.about-mission h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    letter-spacing: -1.5px;
+    color: #111;
+}
+
+.about-mission p {
+    font-size: 1.3rem;
+    color: #555;
+    line-height: 1.8;
+    margin-bottom: 25px;
+}
+
+.about-creator {
+    margin-bottom: 100px;
+}
+
+.creator-card {
+    display: grid;
+    grid-template-columns: 1fr 1.8fr;
+    gap: 60px;
+    align-items: center;
+    padding: 50px;
+    background: #fff;
+    border: 1.5px solid #efefef;
+    border-radius: 50px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.05);
+}
+
+.creator-image img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 35px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.creator-card:hover .creator-image img {
+    transform: scale(1.02);
+}
+
+.creator-info .badge {
+    background: #00d100;
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 8px 16px;
+    border-radius: 50px;
+    letter-spacing: 1.5px;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.creator-info h2 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    letter-spacing: -2px;
+    color: #111;
+}
+
+.creator-info p {
+    font-size: 1.2rem;
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 40px;
+}
+
+.creator-links {
+    display: flex;
+    gap: 20px;
+}
+
+.creator-links .link {
+    text-decoration: none;
+    font-weight: 700;
+    padding: 15px 32px;
+    border-radius: 50px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.link.github {
+    background: #111;
+    color: #fff;
+}
+
+.link.website {
+    background: #f0f0f0;
+    color: #111;
+    border: 1.5px solid #e0e0e0;
+}
+
+.link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.link.github:hover {
+    background: #00d100;
+}
+
+.about-stack {
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+.about-stack h2 {
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.stack-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.stack-item {
+    background: #f9f9f9;
+    border: 1.5px solid #eee;
+    color: #666;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.stack-item:hover {
+    border-color: #00d100;
+    color: #00d100;
+}
+
+@media (max-width: 900px) {
+    .creator-card {
+        grid-template-columns: 1fr;
+        padding: 40px;
+        text-align: center;
+        gap: 30px;
+    }
+    .creator-image {
+        max-width: 250px;
+        margin: 0 auto;
+    }
+    .creator-links {
+        justify-content: center;
+    }
+    .about-hero .title {
+        font-size: 3.5rem;
+    }
+}

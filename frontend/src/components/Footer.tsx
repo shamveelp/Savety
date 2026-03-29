@@ -12,17 +12,17 @@ const Footer = () => {
             <h4>Company</h4>
             <ul>
               <li><a href="/about">About</a></li>
-              <li><a href="/news">News</a></li>
-              <li><a href="/media">Media kit</a></li>
+              <li><a href="/pricing">Pricing</a></li>
+              <li><a href="https://github.com/shamveelp" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a href="https://shamveelp.xyz" target="_blank" rel="noopener noreferrer">Website</a></li>
             </ul>
           </div>
           <div className="footer-column">
             <h4>Products</h4>
             <ul>
-              <li><a href="/photos">Photos</a></li>
-              <li><a href="/auth">Auth</a></li>
-              <li><a href="/locker">Locker</a></li>
-              <li><a href="/ensu">Ensu</a></li>
+              <li><a href="/gallery">Gallery</a></li>
+              <li><a href="/explore">Explore</a></li>
+              <li><a href="/upload">Upload</a></li>
             </ul>
           </div>
           <div className="footer-column">
@@ -63,11 +63,8 @@ const Footer = () => {
         
         <div className="footer-bottom">
           <div className="social-links">
-            {/* Mocked social icons as text/simple shapes for now */}
-            <a href="#" className="social-icon">Discord</a>
-            <a href="#" className="social-icon">X</a>
-            <a href="#" className="social-icon">GitHub</a>
-            {/* ... etc */}
+            <a href="https://github.com/shamveelp" target="_blank" rel="noopener noreferrer" className="social-icon">GitHub</a>
+            <a href="https://shamveelp.xyz" target="_blank" rel="noopener noreferrer" className="social-icon">Website</a>
           </div>
           <div className="footer-legal">
             <span className="language-selector">English ▼</span>
