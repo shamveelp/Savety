@@ -669,3 +669,84 @@
     font-size: 36px;
   }
 }
+
+/* --- Perfect Responsiveness Overhaul --- */
+@media (max-width: 1200px) {
+    .photo-showcase {
+        max-width: 1000px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .hero-title { font-size: 64px; }
+    .hero-subtitle { font-size: 20px; padding: 0 20px; }
+    .features-grid { padding: 0 20px; }
+}
+
+@media (max-width: 768px) {
+    .landing-page { padding: 0 16px; }
+    .hero-section { padding-top: 180px; padding-bottom: 60px; }
+    .hero-title { font-size: 42px; letter-spacing: -1px; }
+    .hero-subtitle { font-size: 16px; margin: 24px 0 40px; }
+    
+    .hero-buttons { 
+        flex-direction: column; 
+        width: 100%; 
+        max-width: 300px; 
+    }
+    .hero-buttons .btn { width: 100%; padding: 16px 30px; font-size: 16px; }
+
+    /* Photo Showcase Mobile: Horizontal Scroll */
+    .photo-showcase {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 20px;
+        gap: 16px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        mask-image: linear-gradient(to right, black 85%, transparent);
+    }
+    .photo-showcase::-webkit-scrollbar { display: none; }
+    
+    .photo-container {
+        width: 200px;
+        height: 250px;
+        flex-shrink: 0;
+        margin-left: 0 !important;
+        transform: none !important;
+    }
+
+    .feature-card {
+        padding: 32px;
+        border-radius: 32px;
+        min-height: auto;
+        gap: 20px;
+    }
+    .card-header h2 { font-size: 26px; }
+    .card-header p { font-size: 14px; margin-bottom: 0; }
+
+    .memory-stack { flex-direction: column; }
+    .memory-item { height: 180px; }
+
+    .reviews-title { font-size: 48px; margin-bottom: 10px; }
+    .reviews-container { padding: 40px 20px; border-radius: 40px; }
+    .review-card { min-width: 280px; padding: 24px; border-radius: 30px; }
+    .avatar-box { width: 60px; height: 60px; }
+    .review-header h3 { font-size: 18px; }
+
+    .memories-heading h2 { font-size: 32px; }
+    .number-box { padding: 30px 20px; border-radius: 20px; }
+    .number-box span { font-size: 36px; letter-spacing: -1px; }
+}
+
+@media (max-width: 480px) {
+    .hero-title { font-size: 36px; }
+    .hero-section { padding-top: 140px; }
+    .brand-ticker { padding: 20px 0; }
+    .ticker-track span { font-size: 18px; padding: 0 30px; }
+    
+    .chick-mascot img { width: 160px; }
+    .number-box span { font-size: 32px; }
+}

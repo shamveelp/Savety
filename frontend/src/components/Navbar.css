@@ -160,7 +160,40 @@
 }
 
 @media (max-width: 768px) {
+  .floating-navbar {
+    top: 16px;
+    padding: 8px 16px;
+    width: 92%;
+    max-width: 460px;
+  }
+  
   .nav-center {
     display: none;
   }
+
+  .nav-right {
+    gap: 8px;
+  }
+
+  .github-link span {
+    display: none;
+  }
+
+  .nav-left .logo {
+    font-size: 18px;
+  }
+
+  .user-btn {
+    padding: 6px 12px;
+  }
+  
+  .user-btn span {
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 400px) {
+    .floating-navbar { width: 95%; padding: 8px 12px; }
 }

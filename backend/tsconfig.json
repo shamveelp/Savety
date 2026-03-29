@@ -12,5 +12,7 @@
     "emitDecoratorMetadata": true,
     "types": ["node", "reflect-metadata"],
     "skipLibCheck": true
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "migrate-slugs.ts", "debug-slugs.ts"]
 }
