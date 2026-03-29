@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getUserUploads } from '../services/user/userUploadApiServices'
 import toast from 'react-hot-toast'
 import Lightbox from '../components/Lightbox'
+import Loading from '../components/common/Loading'
 import './Gallery.css'
 
 const Gallery = () => {
@@ -60,7 +61,7 @@ const Gallery = () => {
     setFilteredUploads(result)
   }
 
-  if (loading) return <div className="gallery-loading">Exploring your vault...</div>
+  if (loading) return <Loading />
 
   return (
     <div className="gallery-container">

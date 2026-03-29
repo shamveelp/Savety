@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { getExploreUploads } from '../services/user/userUploadApiServices'
 import MemoryTile from '../components/MemoryTile'
 import Footer from '../components/Footer'
+import Loading from '../components/common/Loading'
 import './Explore.css'
 
 const Explore = () => {
@@ -95,7 +96,9 @@ const Explore = () => {
           })}
         </div>
 
-        {loading && (
+        {loading && uploads.length === 0 ? (
+          <Loading />
+        ) : loading && (
           <div className="explore-loading-hub">
             <div className="social-spinner"></div>
             <span>Retrieving discoveries...</span>

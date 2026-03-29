@@ -17,8 +17,22 @@ import About from './pages/About'
 import Navbar from './components/Navbar'
 import PublicRoute from './components/layout/PublicRoute'
 import ProtectedRoute from './components/layout/ProtectedRoute'
+import { useState, useEffect } from 'react'
+import Loading from './components/common/Loading'
 
 function App() {
+  const [initialLoading, setInitialLoading] = useState(true)
+
+  useEffect(() => {
+    // Initial app load simulation
+    const timer = setTimeout(() => {
+      setInitialLoading(false)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (initialLoading) return <Loading />
+
   return (
     <Router>
       <Toaster position="top-center" />
