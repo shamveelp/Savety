@@ -11,4 +11,5 @@ export interface IUploadService {
   toggleLike(uploadId: string, userId: string): Promise<IUpload | null>;
   getPublicProfile(userId: string): Promise<any>;
   getUploadBySlug(username: string, slug: string): Promise<IUpload | null>;
+  toggleShare(uploadId: string, userId: string): Promise<IUpload | null>;
 }

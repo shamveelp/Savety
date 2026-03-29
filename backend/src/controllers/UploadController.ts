@@ -67,6 +67,7 @@ export class UploadController implements IUploadController {
   async details(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
+      const { token } = req.query;
       const upload = await this.uploadService.getUploadById(id as string);
       
       if (!upload) {
@@ -74,11 +75,19 @@ export class UploadController implements IUploadController {
         return;
       }
 
-      // If private, check user
+      const userId = (req as any).user?.id;
+      const isOwner = userId && upload.userId.toString() === userId.toString();
+
+      // Visibility Enforcement
       if (upload.visibility === 'private') {
-        const userId = (req as any).user?.id;
-        if (!userId || upload.userId.toString() !== userId.toString()) {
+        if (!isOwner) {
           res.status(403).json({ message: 'This memory is private.' });
+          return;
+        }
+      } else if (upload.visibility === 'unlisted') {
+        const isTokenValid = token && upload.shareToken === token;
+        if (!isOwner && !isTokenValid) {
+          res.status(403).json({ message: 'Access denied. A sharing token is required for this unlisted memory.' });
           return;
         }
       }
@@ -190,14 +199,61 @@ export class UploadController implements IUploadController {
     try {
       const username = req.params.username as string;
       const slug = req.params.slug as string;
+      const { token } = req.query;
       const upload = await this.uploadService.getUploadBySlug(username, slug);
+      
       if (!upload) {
         res.status(404).json({ message: 'Memory not found' });
         return;
       }
+
+      const userId = (req as any).user?.id;
+      const uploadUserId = (upload.userId as any)._id?.toString() || upload.userId.toString();
+      const isOwner = userId && uploadUserId === userId.toString();
+
+      // Visibility Enforcement
+      if (upload.visibility === 'private') {
+        if (!isOwner) {
+          res.status(403).json({ message: 'This memory is private.' });
+          return;
+        }
+      } else if (upload.visibility === 'unlisted') {
+        const isTokenValid = token && upload.shareToken === token;
+        if (!isOwner && !isTokenValid) {
+          res.status(403).json({ message: 'Access denied. A sharing token is required for this unlisted memory.' });
+          return;
+        }
+      }
+
       res.status(200).json({ upload });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+    }
+  }
+
+  async toggleShare(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).user?.id;
+      
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
+      const upload = await this.uploadService.toggleShare(id as any, userId);
+      if (!upload) {
+        res.status(404).json({ message: 'Memory not found or unauthorized' });
+        return;
+      }
+
+      res.status(200).json({ 
+        message: upload.shareEnabled ? 'Secure sharing enabled!' : 'Sharing disabled.', 
+        upload 
+      });
+    } catch (error: any) {
+      logger.error('Toggle share error:', error);
+      res.status(400).json({ message: error.message });
     }
   }
 }

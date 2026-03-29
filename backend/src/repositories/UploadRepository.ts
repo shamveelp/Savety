@@ -10,7 +10,7 @@ export class UploadRepository implements IUploadRepository {
   }
 
   async findById(id: string): Promise<IUpload | null> {
-    return await Upload.findById(id);
+    return await Upload.findById(id).populate('userId', 'username email');
   }
 
   async findByUserId(userId: string): Promise<IUpload[]> {
@@ -20,7 +20,7 @@ export class UploadRepository implements IUploadRepository {
   }
 
   async update(id: string, data: Partial<IUpload>): Promise<IUpload | null> {
-    return await Upload.findByIdAndUpdate(id, data, { new: true });
+    return await Upload.findByIdAndUpdate(id, data, { new: true }).populate('userId', 'username email');
   }
 
   async delete(id: string): Promise<boolean> {

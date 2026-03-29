@@ -67,7 +67,15 @@ export const getPublicProfile = async (userId: string) => {
   return response.data;
 };
 
-export const getUploadBySlug = async (username: string, slug: string) => {
-  const response = await axios.get(`${API_URL}/uploads/s/${username}/${slug}`);
+export const getUploadBySlug = async (username: string, slug: string, token?: string) => {
+  const url = `${API_URL}/uploads/s/${username}/${slug}${token ? `?token=${token}` : ''}`
+  const response = await axios.get(url, { headers: getAuthHeader() });
+  return response.data;
+};
+
+export const toggleShare = async (id: string) => {
+  const response = await axios.post(`${API_URL}/uploads/${id}/share`, {}, {
+    headers: getAuthHeader()
+  });
   return response.data;
 };

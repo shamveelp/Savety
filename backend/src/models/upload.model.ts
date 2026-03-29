@@ -8,6 +8,8 @@ export interface IUpload extends Document {
   images: string[]; // Cloudinary URLs
   likes: mongoose.Types.ObjectId[];
   slug: string;
+  shareToken?: string;
+  shareEnabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +26,8 @@ const UploadSchema: Schema = new Schema({
   images: [{ type: String, required: true }],
   likes: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
   slug: { type: String, required: true, index: true },
+  shareToken: { type: String, default: null },
+  shareEnabled: { type: Boolean, default: false },
 }, {
   timestamps: true
 });

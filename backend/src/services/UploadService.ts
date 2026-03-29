@@ -140,4 +140,18 @@ export class UploadService implements IUploadService {
   async getUploadBySlug(username: string, slug: string): Promise<IUpload | null> {
     return await this.uploadRepository.findByUsernameAndSlug(username, slug);
   }
+
+  async toggleShare(uploadId: string, userId: string): Promise<IUpload | null> {
+    const upload = await this.uploadRepository.findById(uploadId);
+    const uploadUserId = (upload?.userId as any)?._id?.toString() || upload?.userId?.toString();
+    if (!upload || uploadUserId !== userId) return null;
+
+    const shareEnabled = !upload.shareEnabled;
+    const shareToken = shareEnabled ? Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) : null;
+
+    return await this.uploadRepository.update(uploadId, {
+      shareEnabled,
+      shareToken
+    } as any);
+  }
 }

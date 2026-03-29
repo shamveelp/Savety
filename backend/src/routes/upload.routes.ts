@@ -19,7 +19,7 @@ export const setupUploadRoutes = (container: Container): Router => {
   router.get('/explore', (req, res) => uploadController.explore(req, res));
 
   // Public: SEO friendly URL
-  router.get('/s/:username/:slug', (req, res) => uploadController.getUploadBySlug(req, res));
+  router.get('/s/:username/:slug', optionalAuthMiddleware, (req, res) => uploadController.getUploadBySlug(req, res));
 
   // Public/Protected: Details of a specific upload (internally handled visibility)
   router.get('/:id', optionalAuthMiddleware, (req, res) => uploadController.details(req, res));
@@ -29,6 +29,9 @@ export const setupUploadRoutes = (container: Container): Router => {
 
   // Protected: Toggle Like
   router.post('/:id/like', authMiddleware, (req, res) => uploadController.toggleLike(req, res));
+
+  // Protected: Toggle Share
+  router.post('/:id/share', authMiddleware, (req, res) => uploadController.toggleShare(req, res));
 
   // Public: User Public Profile
   router.get('/profile/:userId', (req, res) => uploadController.publicProfile(req, res));

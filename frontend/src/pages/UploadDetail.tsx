@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { getUploadDetails, deleteUpload, updateUpload, getUploadBySlug } from '../services/user/userUploadApiServices'
+import { getUploadDetails, deleteUpload, updateUpload, getUploadBySlug, toggleShare } from '../services/user/userUploadApiServices'
 import Lightbox from '../components/Lightbox'
 import MemoryTile from '../components/MemoryTile'
 import './Upload.css'
@@ -34,17 +34,80 @@ const UploadDetail = () => {
   
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
+  const [generatingShare, setGeneratingShare] = useState(false)
 
   useEffect(() => {
     fetchDetails()
   }, [id, username, slug])
 
+  const handleToggleShare = async () => {
+    try {
+      setGeneratingShare(true)
+      const uploadId = upload?._id || id
+      if (!uploadId) return
+      const data = await toggleShare(uploadId)
+      setUpload(data.upload)
+      toast.success(data.message)
+    } catch (error: any) {
+      toast.error('Failed to update sharing permissions.')
+    } finally {
+      setGeneratingShare(false)
+    }
+  }
+
+  const downloadTicket = async () => {
+    const ticketEl = document.querySelector('.access-ticket') as HTMLElement
+    if (!ticketEl) {
+        toast.error('Target asset not identified.')
+        return
+    }
+    
+    const toastId = toast.loading('Generating high-fidelity ticket asset...')
+    
+    try {
+      // Load html2canvas dynamically if not present
+      if (!(window as any).html2canvas) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+          script.onload = resolve
+          script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+
+      const canvas = await (window as any).html2canvas(ticketEl, {
+          backgroundColor: null, // Transparent/Theme handled by CSS
+          scale: 3, // Premium print quality
+          useCORS: true,
+          logging: false
+      })
+      
+      const imgData = canvas.toDataURL('image/png')
+      const a = document.createElement('a')
+      a.href = imgData
+      a.download = `Savety_Ticket_${upload.slug}.png`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      
+      toast.success('Access ticket preserved locally.', { id: toastId })
+    } catch (e) {
+      console.error(e)
+      toast.error('Ticket generation failed.', { id: toastId })
+    }
+  }
+
   const fetchDetails = async () => {
     try {
       setLoading(true)
+      const searchParams = new URLSearchParams(window.location.search)
+      const token = searchParams.get('token')
+      
       let data;
       if (username && slug) {
-          data = await getUploadBySlug(username, slug)
+          data = await getUploadBySlug(username, slug, token || undefined)
       } else if (id) {
           data = await getUploadDetails(id)
       } else return
@@ -286,6 +349,17 @@ const UploadDetail = () => {
               </button>
             )}
 
+            {!isEditing && (
+              <button 
+                onClick={() => setShowShareModal(true)} 
+                className="share-trigger-btn"
+                title="Share Access Ticket"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                Share
+              </button>
+            )}
+
             {isAuthor && !isEditing && (
               <>
                 <button onClick={() => setIsEditing(true)} className="edit-btn">Edit</button>
@@ -412,6 +486,107 @@ const UploadDetail = () => {
 
       {upload && lightboxIndex !== null && (
         <Lightbox images={upload.images} initialIndex={lightboxIndex} onClose={() => setLightboxIndex(null)} />
+      )}
+
+      {/* Share Modal & Ticket */}
+      {showShareModal && (
+        <div className="share-modal-overlay" onClick={() => setShowShareModal(false)}>
+          <div className="share-modal-content" onClick={e => e.stopPropagation()}>
+            <button className="close-share" onClick={() => setShowShareModal(false)}>&times;</button>
+            
+            <div className="share-header">
+              <h3>Secure Access Ticket</h3>
+              <p>Generation of high-fidelity sharing credentials</p>
+              <button 
+                onClick={(e) => { e.stopPropagation(); downloadTicket(); }} 
+                className="ticket-download-mini"
+                title="Preserve as Image"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Download Ticket
+              </button>
+            </div>
+
+            {/* Movie Ticket Design */}
+            <div className="access-ticket">
+              <div className="ticket-main">
+                <div className="ticket-logo">SAVETY</div>
+                <div className="ticket-info">
+                  <div className="info-group">
+                    <span className="label">PRESERVER</span>
+                    <span className="value">@{upload.userId?.username || 'Member'}</span>
+                  </div>
+                  <div className="info-group">
+                    <span className="label">MEMORY SLUG</span>
+                    <span className="value">{upload.slug}</span>
+                  </div>
+                  <div className="info-group">
+                    <span className="label">VISIBILITY</span>
+                    <span className="value status">{upload.visibility}</span>
+                  </div>
+                </div>
+                <div className="ticket-perforations"></div>
+              </div>
+              <div className="ticket-stub">
+                <div className="qr-container">
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+                      `${window.location.origin}/${upload.userId?.username}/${upload.slug}${upload.shareEnabled && upload.shareToken ? `?token=${upload.shareToken}` : ''}`
+                    )}&color=000000&bgcolor=ffffff&margin=10`} 
+                    alt="Access QR"
+                  />
+                </div>
+                <span className="stub-id">#ID-{upload._id.substring(18).toUpperCase()}</span>
+              </div>
+            </div>
+
+            <div className="share-controls">
+              {isAuthor && upload.visibility === 'unlisted' && (
+                <div className="auth-share-toggle">
+                  <p>Unlisted memories require an active sharing token for external access.</p>
+                  <button 
+                    onClick={handleToggleShare} 
+                    className={`toggle-token-btn ${upload.shareEnabled ? 'active' : ''}`}
+                    disabled={generatingShare}
+                  >
+                    {generatingShare ? 'Processing...' : (upload.shareEnabled ? 'Destroy Private Link' : 'Generate Private Link')}
+                  </button>
+                </div>
+              )}
+
+              {isAuthor && upload.visibility === 'public' && (
+                <div className="auth-share-toggle">
+                  <p>Public memories are visible globally, but you can generate a direct access ticket.</p>
+                  <button 
+                    onClick={handleToggleShare} 
+                    className={`toggle-token-btn ${upload.shareEnabled ? 'active' : ''}`}
+                  >
+                    {upload.shareEnabled ? 'Reset Ticket Link' : 'Activate Ticket Link'}
+                  </button>
+                </div>
+              )}
+
+              {(upload.visibility === 'public' || (upload.visibility === 'unlisted' && (isAuthor || upload.shareEnabled))) ? (
+                <div className="share-link-box">
+                  <input 
+                    readOnly 
+                    value={`${window.location.origin}/${upload.userId?.username}/${upload.slug}${upload.shareEnabled && upload.shareToken ? `?token=${upload.shareToken}` : ''}`} 
+                  />
+                  <button onClick={() => { 
+                    navigator.clipboard.writeText(`${window.location.origin}/${upload.userId?.username}/${upload.slug}${upload.shareEnabled && upload.shareToken ? `?token=${upload.shareToken}` : ''}`); 
+                    toast.success('Link preserved in clipboard.');
+                  }}>Copy</button>
+                </div>
+              ) : (
+                upload.visibility === 'private' ? (
+                  <p className="private-note">Private memories are locked to your vault only. Link generation is restricted.</p>
+                ) : (
+                  <p className="private-note">Secure sharing is currently disabled for this discovery.</p>
+                )
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
