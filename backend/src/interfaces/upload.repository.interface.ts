@@ -6,4 +6,7 @@ export interface IUploadRepository {
   findByUserId(userId: string): Promise<IUpload[]>;
   update(id: string, data: Partial<IUpload>): Promise<IUpload | null>;
   delete(id: string): Promise<boolean>;
+  findPublic(page: number, limit: number): Promise<{ uploads: IUpload[], total: number }>;
+  toggleLike(uploadId: string, userId: string): Promise<IUpload | null>;
+  findPublicByUserId(userId: string): Promise<IUpload[]>;
 }

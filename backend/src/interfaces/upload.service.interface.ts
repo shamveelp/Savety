@@ -7,4 +7,7 @@ export interface IUploadService {
   getUploadById(id: string): Promise<IUpload | null>;
   updateUpload(id: string, userId: string, data: any, newFiles?: any[]): Promise<IUpload | null>;
   deleteUpload(id: string, userId: string): Promise<boolean>;
+  getExploreUploads(page: number, limit: number): Promise<{ uploads: IUpload[], total: number }>;
+  toggleLike(uploadId: string, userId: string): Promise<IUpload | null>;
+  getPublicProfile(userId: string): Promise<any>;
 }

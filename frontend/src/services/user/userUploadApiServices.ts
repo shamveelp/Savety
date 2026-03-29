@@ -47,3 +47,22 @@ export const updateUpload = async (id: string, formData: FormData) => {
   });
   return response.data;
 };
+
+export const getExploreUploads = async (page = 1, limit = 12) => {
+  const response = await axios.get(`${API_URL}/uploads/explore?page=${page}&limit=${limit}`, {
+    headers: getAuthHeader()
+  });
+  return response.data;
+};
+
+export const toggleLike = async (id: string) => {
+  const response = await axios.post(`${API_URL}/uploads/${id}/like`, {}, {
+    headers: getAuthHeader()
+  });
+  return response.data;
+};
+
+export const getPublicProfile = async (userId: string) => {
+  const response = await axios.get(`${API_URL}/uploads/profile/${userId}`);
+  return response.data;
+};

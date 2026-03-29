@@ -1,0 +1,228 @@
+.discovery-post-card {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 120px;
+  background: white;
+  border-radius: 28px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  overflow: hidden;
+  animation: postIn 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes postIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header Hook */
+.discovery-post-header {
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.author-avatar {
+  width: 42px;
+  height: 42px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: #1a1a1a;
+  border: 1.5px solid #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.author-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: 800;
+  font-size: 14.5px;
+  letter-spacing: -0.2px;
+}
+
+.post-timestamp {
+  font-size: 11px;
+  color: #999;
+  font-weight: 600;
+}
+
+.post-more-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.post-more-btn:hover { color: #1a1a1a; }
+
+/* Body: Media Hub */
+.discovery-post-body {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1; /* Square format like social media */
+  background: #fbfbfc;
+  cursor: pointer;
+}
+
+.post-images-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.post-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Internal Nav */
+.post-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a1a;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.post-nav-btn:hover { background: #fff; transform: translateY(-50%) scale(1.1); }
+.post-nav-btn.prev { left: 15px; }
+.post-nav-btn.next { right: 15px; }
+
+.post-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.1);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+}
+
+.post-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  transition: all 0.2s ease;
+}
+
+.post-dots .dot.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+/* Footer Hook */
+.discovery-post-footer {
+  padding: 24px;
+}
+
+.engagement-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #1a1a1a;
+  transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.action-btn:hover { transform: scale(1.15); }
+
+.like-btn.active {
+  color: #ff4d4f;
+  filter: drop-shadow(0 4px 10px rgba(255, 77, 79, 0.2));
+}
+
+.post-engagement-meta {
+  margin-bottom: 16px;
+}
+
+.likes-count {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.post-caption-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.post-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.post-description {
+  font-size: 14.5px;
+  color: #666;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Heart Animation Overlay */
+.heart-overlay-anim {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 20;
+  pointer-events: none;
+  animation: heartBeat 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  filter: drop-shadow(0 0 30px rgba(0,0,0,0.5));
+}
+
+@keyframes heartBeat {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.4); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  80% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+
+@media (max-width: 600px) {
+  .discovery-post-card { border-radius: 0; margin-bottom: 40px; border-left: none; border-right: none; }
+  .discovery-post-header { padding: 12px 18px; }
+  .discovery-post-footer { padding: 18px; }
+}

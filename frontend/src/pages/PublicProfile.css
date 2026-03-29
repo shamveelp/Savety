@@ -1,0 +1,165 @@
+.public-profile-page {
+  padding: 140px 4% 80px;
+  max-width: 935px; /* Instagram width */
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.profile-loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #666;
+}
+
+/* Hero Section */
+.profile-hero {
+  display: flex;
+  gap: 100px;
+  align-items: flex-start;
+  margin-bottom: 50px;
+}
+
+.profile-avatar-large {
+  width: 150px;
+  height: 150px;
+  background: #f0f2f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  font-weight: 800;
+  color: #1a1a1a;
+  border: 4px solid #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.profile-identity h1 {
+  font-size: 28px;
+  font-weight: 300;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.profile-stats span {
+  font-size: 16px;
+  color: #1a1a1a;
+}
+
+.profile-bio {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+
+/* Tabs Hook */
+.profile-tabs {
+  border-top: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  border-top: 1.5px solid transparent;
+  padding: 18px 0;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #999;
+  cursor: pointer;
+  margin-top: -1px;
+}
+
+.tab-btn.active {
+  color: #1a1a1a;
+  border-top: 1.5px solid #1a1a1a;
+}
+
+/* Discovery Grid */
+.profile-discovery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  padding-top: 28px;
+}
+
+.grid-item {
+  position: relative;
+  aspect-ratio: 1/1;
+  background: #f0f2f5;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 5;
+}
+
+.grid-item:hover .grid-overlay {
+  opacity: 1;
+}
+
+.grid-stats {
+  display: flex;
+  gap: 30px;
+  color: white;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.grid-stats span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-empty {
+  padding: 60px 0;
+  text-align: center;
+  color: #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (max-width: 735px) {
+  .profile-hero { gap: 30px; flex-direction: column; align-items: center; text-align: center; }
+  .profile-avatar-large { width: 80px; height: 80px; font-size: 32px; }
+  .profile-stats { gap: 20px; width: 100%; justify-content: center; }
+  .profile-discovery-grid { gap: 3px; padding-top: 0; }
+  .public-profile-page { padding-left: 0; padding-right: 0; }
+  .profile-identity h1 { font-size: 24px; }
+}

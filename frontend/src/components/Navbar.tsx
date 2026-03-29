@@ -45,7 +45,7 @@ const Navbar = () => {
       </div>
       <div className="nav-center">
         <Link to="/gallery">My Gallery</Link>
-        <Link to="/">Explore</Link>
+        <Link to="/explore">Explore</Link>
         <Link to="/pricing">Pricing</Link>
         <Link to="/upload">Upload</Link>
         <Link to="/about">About</Link>

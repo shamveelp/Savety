@@ -90,8 +90,19 @@ export class UploadService implements IUploadService {
   async deleteUpload(id: string, userId: string): Promise<boolean> {
     const upload = await this.uploadRepository.findById(id);
     if (!upload || upload.userId.toString() !== userId) return false;
-    
-    // Optional: Delete from Cloudinary too? (Skipping for now for simplicity)
     return await this.uploadRepository.delete(id);
+  }
+
+  async getExploreUploads(page: number, limit: number): Promise<{ uploads: IUpload[], total: number }> {
+    return await this.uploadRepository.findPublic(page, limit);
+  }
+
+  async toggleLike(uploadId: string, userId: string): Promise<IUpload | null> {
+    return await this.uploadRepository.toggleLike(uploadId, userId);
+  }
+
+  async getPublicProfile(userId: string): Promise<any> {
+    const uploads = await this.uploadRepository.findPublicByUserId(userId);
+    return { uploads };
   }
 }

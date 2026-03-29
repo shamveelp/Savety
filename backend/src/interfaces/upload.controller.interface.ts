@@ -6,4 +6,7 @@ export interface IUploadController {
   details(req: Request, res: Response): Promise<void>;
   update(req: Request, res: Response): Promise<void>;
   remove(req: Request, res: Response): Promise<void>;
+  explore(req: Request, res: Response): Promise<void>;
+  toggleLike(req: Request, res: Response): Promise<void>;
+  publicProfile(req: Request, res: Response): Promise<void>;
 }

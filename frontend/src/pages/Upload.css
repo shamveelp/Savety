@@ -327,20 +327,35 @@
 
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  margin-bottom: 60px;
-  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-auto-rows: 240px;
+  grid-auto-flow: dense;
+  gap: 16px;
+  padding: 40px 0;
 }
 
 .detail-image-item {
   position: relative;
-  border-radius: 24px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  cursor: zoom-in;
-  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
   background: #f8f9fa;
+  cursor: zoom-in;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+/* Intelligent Spanning (will be applied via JS) */
+.detail-image-item.wide {
+  grid-column: span 2;
+}
+
+.detail-image-item.tall {
+  grid-row: span 2;
+}
+
+.detail-image-item.large {
+  grid-column: span 2;
+  grid-row: span 2;
 }
 
 .detail-image-item.draggable {

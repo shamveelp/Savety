@@ -15,11 +15,20 @@ export const setupUploadRoutes = (container: Container): Router => {
   // Protected: List user uploads
   router.get('/', authMiddleware, (req, res) => uploadController.list(req, res));
 
+  // Public: Explore feed (paginated)
+  router.get('/explore', (req, res) => uploadController.explore(req, res));
+
   // Public/Protected: Details of a specific upload (internally handled visibility)
   router.get('/:id', optionalAuthMiddleware, (req, res) => uploadController.details(req, res));
 
   // Protected: Update upload (edit metadata/images)
   router.put('/:id', authMiddleware, multerUpload.array('images', 20), (req, res) => uploadController.update(req, res));
+
+  // Protected: Toggle Like
+  router.post('/:id/like', authMiddleware, (req, res) => uploadController.toggleLike(req, res));
+
+  // Public: User Public Profile
+  router.get('/profile/:userId', (req, res) => uploadController.publicProfile(req, res));
 
   // Protected: Remove upload
   router.delete('/:id', authMiddleware, (req, res) => uploadController.remove(req, res));

@@ -10,6 +10,8 @@ import Gallery from './pages/Gallery'
 import ChangePassword from './pages/ChangePassword'
 import Upload from './pages/Upload'
 import UploadDetail from './pages/UploadDetail'
+import Explore from './pages/Explore'
+import PublicProfile from './pages/PublicProfile'
 import Navbar from './components/Navbar'
 import PublicRoute from './components/layout/PublicRoute'
 import ProtectedRoute from './components/layout/ProtectedRoute'
@@ -21,6 +23,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/profile/:userId" element={<PublicProfile />} />
         
         {/* Auth Routes */}
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />

@@ -139,4 +139,42 @@ export class UploadController implements IUploadController {
       res.status(400).json({ message: error.message });
     }
   }
+
+  async explore(req: Request, res: Response): Promise<void> {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 12;
+      const result = await this.uploadService.getExploreUploads(page, limit);
+      res.status(200).json(result);
+    } catch (error: any) {
+      logger.error('Upload explore error:', error);
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  async toggleLike(req: Request, res: Response): Promise<void> {
+    try {
+      const id = req.params.id as string;
+      const userId = (req as any).user.id as string;
+      const upload = await this.uploadService.toggleLike(id, userId);
+      if (!upload) {
+        res.status(404).json({ message: 'Memory not found' });
+        return;
+      }
+      const isLiked = upload.likes.some(likeId => likeId.toString() === userId);
+      res.status(200).json({ likesCount: upload.likes.length, isLiked });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async publicProfile(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.params.userId as string;
+      const result = await this.uploadService.getPublicProfile(userId);
+      res.status(200).json(result);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 }
