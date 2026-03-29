@@ -3,14 +3,13 @@
   flex-direction: column;
   min-height: 100vh;
   padding: 0 40px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 @media (max-width: 768px) {
   .landing-page {
-    padding: 0 20px;
-  }
-  .nav-center {
-    display: none;
+    padding: 0 16px;
   }
 }
 
