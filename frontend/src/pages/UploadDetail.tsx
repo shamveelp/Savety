@@ -475,10 +475,17 @@ const UploadDetail = () => {
         {/* Footer */}
         <div className="detail-footer">
           <p>Preserved by {isAuthor ? 'You' : (upload?.username || 'Member')} on {new Date(upload?.createdAt).toLocaleDateString()}</p>
-          {upload?.visibility === 'unlisted' && !isEditing && (
+          {(upload?.visibility === 'public' || (upload?.visibility === 'unlisted' && upload?.shareEnabled)) && !isEditing && (
             <div className="share-section">
-              <input readOnly value={window.location.href} className="share-link" />
-              <button onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success('Link copied!'); }} className="copy-btn">Copy Link</button>
+              <input 
+                readOnly 
+                value={`${window.location.origin}/${upload.userId?.username}/${upload.slug}${upload.shareEnabled && upload.shareToken ? `?token=${upload.shareToken}` : ''}`} 
+                className="share-link" 
+              />
+              <button onClick={() => { 
+                navigator.clipboard.writeText(`${window.location.origin}/${upload.userId?.username}/${upload.slug}${upload.shareEnabled && upload.shareToken ? `?token=${upload.shareToken}` : ''}`); 
+                toast.success('Link preserved in clipboard.'); 
+              }} className="copy-btn">Copy Link</button>
             </div>
           )}
         </div>
