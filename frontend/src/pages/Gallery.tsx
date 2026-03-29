@@ -105,7 +105,7 @@ const Gallery = () => {
         <div className="gallery-main-grid">
           {filteredUploads.map((upload) => (
             <div key={upload._id} className="gallery-card-item">
-              <Link to={`/upload/${upload._id}`} className="card-link-wrapper">
+              <Link to={`/${upload.userId?.username}/${upload.slug}`} className="card-link-wrapper">
                 <div className="card-thumb">
                   <img src={upload.images[0]} alt={upload.title} loading="lazy" />
                   {upload.images.length > 1 && (

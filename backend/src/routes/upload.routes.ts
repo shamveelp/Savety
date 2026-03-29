@@ -18,6 +18,9 @@ export const setupUploadRoutes = (container: Container): Router => {
   // Public: Explore feed (paginated)
   router.get('/explore', (req, res) => uploadController.explore(req, res));
 
+  // Public: SEO friendly URL
+  router.get('/s/:username/:slug', (req, res) => uploadController.getUploadBySlug(req, res));
+
   // Public/Protected: Details of a specific upload (internally handled visibility)
   router.get('/:id', optionalAuthMiddleware, (req, res) => uploadController.details(req, res));
 

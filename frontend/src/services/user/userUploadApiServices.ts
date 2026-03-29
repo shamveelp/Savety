@@ -66,3 +66,8 @@ export const getPublicProfile = async (userId: string) => {
   const response = await axios.get(`${API_URL}/uploads/profile/${userId}`);
   return response.data;
 };
+
+export const getUploadBySlug = async (username: string, slug: string) => {
+  const response = await axios.get(`${API_URL}/uploads/s/${username}/${slug}`);
+  return response.data;
+};

@@ -13,6 +13,15 @@ export class UploadService implements IUploadService {
     @inject(TYPES.UploadRepository) private uploadRepository: IUploadRepository
   ) {}
 
+  private generateSlug(title: string): string {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
   async createUpload(userId: string, data: CreateUploadDto, files: any[]): Promise<IUpload> {
     logger.info(`Processing ${files.length} images for User: ${userId}`);
     
@@ -36,12 +45,15 @@ export class UploadService implements IUploadService {
     const imageUrls = await Promise.all(uploadPromises);
     logger.info(`Successfully uploaded ${imageUrls.length} images to Cloudinary`);
 
+    const slug = this.generateSlug(data.title);
+
     return await this.uploadRepository.create({
       userId: userId as any,
       title: data.title,
       description: data.description,
       visibility: data.visibility as any,
       images: imageUrls,
+      slug: slug
     });
   }
 
@@ -79,12 +91,18 @@ export class UploadService implements IUploadService {
       updatedImages = [...updatedImages, ...newUrls];
     }
 
-    return await this.uploadRepository.update(id, {
+    const updateData: any = {
       title: data.title || existing.title,
       description: data.description !== undefined ? data.description : existing.description,
       visibility: data.visibility || existing.visibility,
       images: updatedImages,
-    });
+    };
+
+    if (!existing.slug || (data.title && data.title !== existing.title)) {
+        updateData.slug = this.generateSlug(data.title || existing.title);
+    }
+
+    return await this.uploadRepository.update(id, updateData);
   }
 
   async deleteUpload(id: string, userId: string): Promise<boolean> {
@@ -104,5 +122,9 @@ export class UploadService implements IUploadService {
   async getPublicProfile(userId: string): Promise<any> {
     const uploads = await this.uploadRepository.findPublicByUserId(userId);
     return { uploads };
+  }
+
+  async getUploadBySlug(username: string, slug: string): Promise<IUpload | null> {
+    return await this.uploadRepository.findByUsernameAndSlug(username, slug);
   }
 }

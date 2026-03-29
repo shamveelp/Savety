@@ -38,6 +38,9 @@ function App() {
         <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
         <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
         <Route path="/upload/:id" element={<ProtectedRoute><UploadDetail /></ProtectedRoute>} />
+
+        {/* SEO Friendly Catch-all for Username/Slug */}
+        <Route path="/:username/:slug" element={<UploadDetail />} />
       </Routes>
     </Router>
   )

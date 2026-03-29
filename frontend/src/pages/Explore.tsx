@@ -64,7 +64,7 @@ const Explore = () => {
               <MemoryTile 
                 url={upload.images[0]} 
                 index={index}
-                onClick={() => navigate(`/upload/${upload._id}`)}
+                onClick={() => navigate(`/${upload.userId?.username}/${upload.slug}`)}
                 className="explore-item-card"
               >
                 <div className="explore-tile-overlay">

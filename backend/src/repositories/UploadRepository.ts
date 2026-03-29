@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import mongoose from 'mongoose';
 import Upload, { IUpload } from '../models/upload.model';
 import { IUploadRepository } from '../interfaces/upload.repository.interface';
 
@@ -13,7 +14,9 @@ export class UploadRepository implements IUploadRepository {
   }
 
   async findByUserId(userId: string): Promise<IUpload[]> {
-    return await Upload.find({ userId }).sort({ createdAt: -1 });
+    return await Upload.find({ userId })
+      .sort({ createdAt: -1 })
+      .populate('userId', 'username email');
   }
 
   async update(id: string, data: Partial<IUpload>): Promise<IUpload | null> {
@@ -56,6 +59,32 @@ export class UploadRepository implements IUploadRepository {
   }
 
   async findPublicByUserId(userId: string): Promise<IUpload[]> {
-    return await Upload.find({ userId, visibility: 'public' }).sort({ createdAt: -1 });
+    return await Upload.find({ userId, visibility: 'public' })
+      .sort({ createdAt: -1 })
+      .populate('userId', 'username email');
+  }
+
+  async findByUsernameAndSlug(username: string, slug: string): Promise<IUpload | null> {
+    // Try by slug first
+    let upload = await Upload.findOne({ slug })
+      .populate({
+        path: 'userId',
+        match: { username: username }
+      });
+    
+    // Fallback: If not found by slug, maybe slug IS the ID
+    if (!upload || !upload.userId) {
+        if (mongoose.Types.ObjectId.isValid(slug)) {
+            upload = await Upload.findById(slug).populate('userId', 'username email');
+            // Ensure username matches if provided (extra safety)
+            if (upload && (upload.userId as any).username !== username) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    return upload;
   }
 }

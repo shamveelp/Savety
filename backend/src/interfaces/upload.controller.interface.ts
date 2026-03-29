@@ -9,4 +9,5 @@ export interface IUploadController {
   explore(req: Request, res: Response): Promise<void>;
   toggleLike(req: Request, res: Response): Promise<void>;
   publicProfile(req: Request, res: Response): Promise<void>;
+  getUploadBySlug(req: Request, res: Response): Promise<void>;
 }

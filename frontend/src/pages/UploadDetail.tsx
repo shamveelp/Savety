@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { getUploadDetails, deleteUpload, updateUpload } from '../services/user/userUploadApiServices'
+import { getUploadDetails, deleteUpload, updateUpload, getUploadBySlug } from '../services/user/userUploadApiServices'
 import Lightbox from '../components/Lightbox'
 import MemoryTile from '../components/MemoryTile'
 import './Upload.css'
@@ -15,7 +15,7 @@ type EditItem = {
 }
 
 const UploadDetail = () => {
-  const { id } = useParams()
+  const { id, username, slug } = useParams()
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -37,12 +37,18 @@ const UploadDetail = () => {
 
   useEffect(() => {
     fetchDetails()
-  }, [id])
+  }, [id, username, slug])
 
   const fetchDetails = async () => {
     try {
-      if (!id) return
-      const data = await getUploadDetails(id)
+      setLoading(true)
+      let data;
+      if (username && slug) {
+          data = await getUploadBySlug(username, slug)
+      } else if (id) {
+          data = await getUploadDetails(id)
+      } else return
+
       setUpload(data.upload)
       
       const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -53,7 +59,7 @@ const UploadDetail = () => {
           currentUserId = payload.id
         } catch (e) {}
       }
-      setIsAuthor(currentUserId === data.upload.userId)
+      setIsAuthor(currentUserId === data.upload.userId._id || currentUserId === data.upload.userId)
       
       // Default Edit States
       setEditTitle(data.upload.title)

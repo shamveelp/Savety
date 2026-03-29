@@ -171,8 +171,23 @@ export class UploadController implements IUploadController {
   async publicProfile(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.params.userId as string;
-      const result = await this.uploadService.getPublicProfile(userId);
-      res.status(200).json(result);
+      const data = await this.uploadService.getPublicProfile(userId);
+      res.status(200).json(data);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async getUploadBySlug(req: Request, res: Response): Promise<void> {
+    try {
+      const username = req.params.username as string;
+      const slug = req.params.slug as string;
+      const upload = await this.uploadService.getUploadBySlug(username, slug);
+      if (!upload) {
+        res.status(404).json({ message: 'Memory not found' });
+        return;
+      }
+      res.status(200).json({ upload });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

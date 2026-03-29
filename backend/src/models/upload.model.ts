@@ -7,6 +7,7 @@ export interface IUpload extends Document {
   visibility: 'public' | 'private' | 'unlisted';
   images: string[]; // Cloudinary URLs
   likes: mongoose.Types.ObjectId[];
+  slug: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,8 +23,11 @@ const UploadSchema: Schema = new Schema({
   },
   images: [{ type: String, required: true }],
   likes: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
+  slug: { type: String, required: true, index: true },
 }, {
   timestamps: true
 });
+
+UploadSchema.index({ userId: 1, slug: 1 }, { unique: true });
 
 export default mongoose.model<IUpload>('Upload', UploadSchema);

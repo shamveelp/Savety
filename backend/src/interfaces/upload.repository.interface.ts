@@ -9,4 +9,5 @@ export interface IUploadRepository {
   findPublic(page: number, limit: number): Promise<{ uploads: IUpload[], total: number }>;
   toggleLike(uploadId: string, userId: string): Promise<IUpload | null>;
   findPublicByUserId(userId: string): Promise<IUpload[]>;
+  findByUsernameAndSlug(username: string, slug: string): Promise<IUpload | null>;
 }
