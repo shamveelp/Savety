@@ -111,8 +111,8 @@ function Home() {
         <div className="features-grid">
           <div className="feature-card face-recognition">
             <div className="card-header">
-              <h2>Face recognition</h2>
-              <p>On-device face detection and grouping</p>
+              <h2>Smart Face Sorting (Coming Soon...)</h2>
+              <p>State-of-the-art on-device face discovery and grouping</p>
             </div>
             <div className="card-content">
               <div className="face-demo">
@@ -125,8 +125,8 @@ function Home() {
 
           <div className="feature-card zero-knowledge">
             <div className="card-header">
-              <h2>Zero knowledge AI</h2>
-              <p>Search for anything in natural language</p>
+              <h2>Explore Related</h2>
+              <p>Discover high-fidelity memories with natural language triggers</p>
             </div>
             <div className="card-content">
               <div className="search-demo">
@@ -135,10 +135,10 @@ function Home() {
                   <img src={sunset2} alt="Sunset 2" className="s2" />
                   <img src={sunset3} alt="Sunset 3" className="s3" />
                 </div>
-                <div className="search-bar">
+                <Link to="/explore" className="search-bar" style={{ textDecoration: 'none', cursor: 'pointer' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                  <span>Sunset in the beach</span>
-                </div>
+                  <span>Search your memories</span>
+                </Link>
               </div>
             </div>
           </div>
