@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { getExploreUploads } from '../services/user/userUploadApiServices'
-import DiscoveryPost from '../components/DiscoveryPost'
+import MemoryTile from '../components/MemoryTile'
+import Footer from '../components/Footer'
 import './Explore.css'
 
 const Explore = () => {
@@ -12,9 +13,6 @@ const Explore = () => {
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const observer = useRef<IntersectionObserver | null>(null)
-  
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
-  const currentUserId = user.id
 
   const fetchUploads = async (pageNum: number) => {
     if (loading) return
@@ -52,18 +50,36 @@ const Explore = () => {
   }, [loading, hasMore])
 
   return (
-    <div className="explore-page vertical-feed">
+    <div className="explore-page">
       <div className="explore-header">
         <h1>Global Discovery</h1>
-        <p>Exploring public memories from across the Savety ecosystem</p>
+        <p>Exploring the latest public memories from the Savety ecosystem</p>
       </div>
 
-      <div className="discovery-feed-container">
+      <div className="explore-grid masonry">
         {uploads.map((upload, index) => {
           const isLast = index === uploads.length - 1
           return (
-            <div key={upload._id} ref={isLast ? lastElementRef : null}>
-              <DiscoveryPost upload={upload} currentUserId={currentUserId} />
+            <div key={upload._id} ref={isLast ? lastElementRef : null} className="explore-tile-wrapper">
+              <MemoryTile 
+                url={upload.images[0]} 
+                index={index}
+                onClick={() => navigate(`/upload/${upload._id}`)}
+                className="explore-item-card"
+              >
+                <div className="explore-tile-overlay">
+                  <div className="overlay-meta">
+                    <h3 className="overlay-title">{upload.title}</h3>
+                    <span className="overlay-author">@{upload.userId?.username || 'Member'}</span>
+                  </div>
+                  {upload.images.length > 1 && (
+                    <div className="bulky-badge">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                      {upload.images.length}
+                    </div>
+                  )}
+                </div>
+              </MemoryTile>
             </div>
           )
         })}
@@ -77,8 +93,11 @@ const Explore = () => {
       )}
 
       {!hasMore && uploads.length > 0 && (
-        <div className="explore-end-gate">
-          <p>You've reached the horizon of global discoveries.</p>
+        <div className="explore-footer-wrapper">
+          <div className="explore-end-gate">
+            <p>You've reached the horizon of global discoveries.</p>
+          </div>
+          <Footer />
         </div>
       )}
       
