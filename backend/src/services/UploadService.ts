@@ -47,6 +47,11 @@ export class UploadService implements IUploadService {
 
     const slug = this.generateSlug(data.title);
 
+    const duplicate = await this.uploadRepository.findByUserIdAndSlug(userId, slug);
+    if (duplicate) {
+        throw new Error('DUPLICATE_TITLE');
+    }
+
     return await this.uploadRepository.create({
       userId: userId as any,
       title: data.title,
@@ -99,7 +104,15 @@ export class UploadService implements IUploadService {
     };
 
     if (!existing.slug || (data.title && data.title !== existing.title)) {
-        updateData.slug = this.generateSlug(data.title || existing.title);
+        const newSlug = this.generateSlug(data.title || existing.title);
+        
+        // Check if this new slug is taken by ANOTHER upload by the same user
+        const duplicate = await this.uploadRepository.findByUserIdAndSlug(userId, newSlug);
+        if (duplicate && duplicate._id.toString() !== id) {
+            throw new Error('DUPLICATE_TITLE');
+        }
+        
+        updateData.slug = newSlug;
     }
 
     return await this.uploadRepository.update(id, updateData);

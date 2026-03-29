@@ -87,4 +87,8 @@ export class UploadRepository implements IUploadRepository {
     
     return upload;
   }
+
+  async findByUserIdAndSlug(userId: string, slug: string): Promise<IUpload | null> {
+    return await Upload.findOne({ userId, slug });
+  }
 }

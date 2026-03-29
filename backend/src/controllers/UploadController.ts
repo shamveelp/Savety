@@ -35,6 +35,10 @@ export class UploadController implements IUploadController {
         upload 
       });
     } catch (error: any) {
+      if (error.message === 'DUPLICATE_TITLE') {
+          res.status(400).json({ message: 'A memory with this title already exists in your vault. Consider adding to the same bulk or using a different title.' });
+          return;
+      }
       logger.error('Upload create error:', error);
       if (error.errors) {
         res.status(400).json({ errors: error.errors });
@@ -113,6 +117,10 @@ export class UploadController implements IUploadController {
 
       res.status(200).json({ message: 'Memory refined successfully!', upload: updated });
     } catch (error: any) {
+      if (error.message === 'DUPLICATE_TITLE') {
+          res.status(400).json({ message: 'Another memory with this title already exists in your vault. Please use a unique title.' });
+          return;
+      }
       logger.error('Upload update error:', error);
       res.status(400).json({ message: error.message });
     }
