@@ -30,7 +30,7 @@
   z-index: 10001;
 }
 
-.lb-close, .lb-zoom {
+.lb-close, .lb-download, .lb-reset {
   color: white;
   opacity: 0.8;
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -41,12 +41,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
 }
 
-.lb-close:hover, .lb-zoom:hover {
+.lb-close:hover, .lb-download:hover, .lb-reset:hover {
   background: #1a1a1a;
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+  opacity: 1;
 }
 
 .lb-nav {

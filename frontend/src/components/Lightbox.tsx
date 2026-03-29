@@ -135,11 +135,32 @@ const Lightbox = ({ images, initialIndex, onClose }: LightboxProps) => {
     }
   }
 
+  const handleDownload = async () => {
+    const url = images[currentIndex]
+    try {
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = `savety_memory_${currentIndex + 1}.jpg`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(blobUrl)
+      document.body.removeChild(a)
+    } catch (e) {
+      console.error('Download failed', e)
+    }
+  }
+
   return (
     <div className="lightbox-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="lightbox-controls">
-        <button className="lb-close" onClick={onClose}>
+        <button className="lb-close" onClick={onClose} title="Close Lightbox">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <button className="lb-download" onClick={handleDownload} title="Download Photo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
         </button>
         <button className="lb-reset" onClick={resetTransform} title="Reset View">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

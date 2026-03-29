@@ -130,6 +130,73 @@ const UploadDetail = () => {
     }
   }
 
+  // --- Download Logic ---
+  const downloadSingle = async (url: string, index: number) => {
+    const toastId = toast.loading('Retrieving asset...')
+    try {
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = `${upload.title.replace(/\s+/g, '_')}_${index}.jpg`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(blobUrl)
+      document.body.removeChild(a)
+      toast.success('Asset preserved locally.', { id: toastId })
+    } catch (e) {
+      toast.error('Retrieval failed.', { id: toastId })
+    }
+  }
+
+  const downloadBulk = async () => {
+    if (!upload?.images.length) return
+    const toastId = toast.loading('Preparing archive...')
+    
+    try {
+      // Load JSZip dynamically
+      if (!(window as any).JSZip) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+          script.onload = resolve
+          script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+
+      const zip = new (window as any).JSZip()
+      const folder = zip.folder(upload.title.replace(/\s+/g, '_'))
+
+      // Fetch all images
+      const promises = upload.images.map(async (url: string, i: number) => {
+        const response = await fetch(url)
+        const blob = await response.blob()
+        const extension = url.split('.').pop()?.split('?')[0] || 'jpg'
+        folder.file(`image_${i + 1}.${extension}`, blob)
+      })
+
+      await Promise.all(promises)
+      const content = await zip.generateAsync({ type: "blob" })
+      
+      // Trigger download
+      const blobUrl = window.URL.createObjectURL(content)
+      const a = document.createElement('a')
+      a.href = blobUrl
+      a.download = `${upload.title.replace(/\s+/g, '_')}_collection.zip`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(blobUrl)
+      document.body.removeChild(a)
+      
+      toast.success('Archive preserved locally.', { id: toastId })
+    } catch (e) {
+      console.error(e)
+      toast.error('Archival failed.', { id: toastId })
+    }
+  }
+
   // DnD Handlers
   const handleDragStart = (idx: number) => setDraggedIdx(idx)
   const handleDragOver = (e: React.DragEvent, idx: number) => {
@@ -192,6 +259,17 @@ const UploadDetail = () => {
           </div>
 
           <div className="detail-actions">
+            {!isEditing && (
+              <button 
+                onClick={downloadBulk} 
+                className="bulk-download-btn"
+                title="Download Collection as ZIP"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Archive
+              </button>
+            )}
+
             {isAuthor && !isEditing && (
               <>
                 <button onClick={() => setIsEditing(true)} className="edit-btn">Edit</button>
@@ -284,8 +362,15 @@ const UploadDetail = () => {
             </>
           ) : (
             upload?.images.map((url: string, index: number) => (
-              <div key={index} className="detail-image-item" onClick={() => setLightboxIndex(index)}>
+              <div key={index} className="detail-image-item group" onClick={() => setLightboxIndex(index)}>
                 <img src={url} alt={`Memory ${index}`} />
+                <button 
+                  className="single-download-overlay"
+                  onClick={(e) => { e.stopPropagation(); downloadSingle(url, index); }}
+                  title="Download Photo"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                </button>
               </div>
             ))
           )}

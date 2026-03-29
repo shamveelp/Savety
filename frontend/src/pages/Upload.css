@@ -580,6 +580,59 @@
   cursor: pointer;
 }
 
+.bulk-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 16px;
+  background: #f8f9fa;
+  color: #1a1a1a;
+  font-weight: 700;
+  border: 1.5px solid rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.bulk-download-btn:hover {
+  background: #1a1a1a;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.single-download-overlay {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.detail-image-item:hover .single-download-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.single-download-overlay:hover {
+  background: #1a1a1a;
+  color: white;
+  transform: scale(1.1);
+}
+
 @keyframes slideDownFade {
   from { opacity: 0; transform: translateY(-15px); }
   to { opacity: 1; transform: translateY(0); }
