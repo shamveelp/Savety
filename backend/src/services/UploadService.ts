@@ -72,7 +72,8 @@ export class UploadService implements IUploadService {
 
   async updateUpload(id: string, userId: string, data: any, newFiles?: any[]): Promise<IUpload | null> {
     const existing = await this.uploadRepository.findById(id);
-    if (!existing || existing.userId.toString() !== userId) {
+    const existingUserId = (existing?.userId as any)?._id?.toString() || existing?.userId?.toString();
+    if (!existing || existingUserId !== userId) {
       throw new Error('Forbidden or not found');
     }
 
@@ -120,7 +121,8 @@ export class UploadService implements IUploadService {
 
   async deleteUpload(id: string, userId: string): Promise<boolean> {
     const upload = await this.uploadRepository.findById(id);
-    if (!upload || upload.userId.toString() !== userId) return false;
+    const uploadUserId = (upload?.userId as any)?._id?.toString() || upload?.userId?.toString();
+    if (!upload || uploadUserId !== userId) return false;
     return await this.uploadRepository.delete(id);
   }
 
