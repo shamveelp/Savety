@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const isAuthPage = ['/login', '/signup', '/verify-otp', '/forgot-password'].includes(location.pathname)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
@@ -82,12 +85,14 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Bottom Floating Navbar */}
-      <nav className="bottom-navbar">
-        <Link to="/gallery" className="bottom-nav-item">Gallery</Link>
-        <Link to="/explore" className="bottom-nav-item">Explore</Link>
-        <Link to="/upload" className="bottom-nav-item">Upload</Link>
-        <Link to="/about" className="bottom-nav-item">About</Link>
-      </nav>
+      {!isAuthPage && (
+        <nav className="bottom-navbar">
+          <Link to="/gallery" className="bottom-nav-item">Gallery</Link>
+          <Link to="/explore" className="bottom-nav-item">Explore</Link>
+          <Link to="/upload" className="bottom-nav-item">Upload</Link>
+          <Link to="/about" className="bottom-nav-item">About</Link>
+        </nav>
+      )}
     </>
   )
 }
