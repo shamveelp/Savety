@@ -497,14 +497,16 @@ const UploadDetail = () => {
             <div className="share-header">
               <h3>Secure Access Ticket</h3>
               <p>Generation of high-fidelity sharing credentials</p>
-              <button 
-                onClick={(e) => { e.stopPropagation(); downloadTicket(); }} 
-                className="ticket-download-mini"
-                title="Preserve as Image"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                Download Ticket
-              </button>
+              {(upload.visibility === 'public' || (upload.visibility === 'unlisted' && upload.shareEnabled)) && (
+                <button 
+                    onClick={(e) => { e.stopPropagation(); downloadTicket(); }} 
+                    className="ticket-download-mini"
+                    title="Preserve as Image"
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    Download Ticket
+                </button>
+              )}
             </div>
 
             {/* Movie Ticket Design */}
@@ -525,16 +527,28 @@ const UploadDetail = () => {
                     <span className="value status">{upload.visibility}</span>
                   </div>
                 </div>
+                {(!upload.shareEnabled && upload.visibility === 'unlisted') && (
+                    <div className="ticket-overlay-locked">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <span>TOKEN REQUIRED</span>
+                    </div>
+                )}
                 <div className="ticket-perforations"></div>
               </div>
               <div className="ticket-stub">
                 <div className="qr-container">
-                  <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
-                      `${window.location.origin}/${upload.userId?.username}/${upload.slug}${upload.shareEnabled && upload.shareToken ? `?token=${upload.shareToken}` : ''}`
-                    )}&color=000000&bgcolor=ffffff&margin=10`} 
-                    alt="Access QR"
-                  />
+                  {(upload.visibility === 'public' || upload.shareEnabled) ? (
+                    <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+                        `${window.location.origin}/${upload.userId?.username}/${upload.slug}${upload.shareEnabled && upload.shareToken ? `?token=${upload.shareToken}` : ''}`
+                        )}&color=000000&bgcolor=ffffff&margin=10`} 
+                        alt="Access QR"
+                    />
+                  ) : (
+                    <div className="qr-placeholder-locked">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                  )}
                 </div>
                 <span className="stub-id">#ID-{upload._id.substring(18).toUpperCase()}</span>
               </div>
@@ -543,7 +557,7 @@ const UploadDetail = () => {
             <div className="share-controls">
               {isAuthor && upload.visibility === 'unlisted' && (
                 <div className="auth-share-toggle">
-                  <p>Unlisted memories require an active sharing token for external access.</p>
+                  <p>Unlisted memories require an active private link for external discovery.</p>
                   <button 
                     onClick={handleToggleShare} 
                     className={`toggle-token-btn ${upload.shareEnabled ? 'active' : ''}`}
@@ -566,7 +580,7 @@ const UploadDetail = () => {
                 </div>
               )}
 
-              {(upload.visibility === 'public' || (upload.visibility === 'unlisted' && (isAuthor || upload.shareEnabled))) ? (
+              {(upload.visibility === 'public' || upload.shareEnabled) ? (
                 <div className="share-link-box">
                   <input 
                     readOnly 
@@ -581,7 +595,9 @@ const UploadDetail = () => {
                 upload.visibility === 'private' ? (
                   <p className="private-note">Private memories are locked to your vault only. Link generation is restricted.</p>
                 ) : (
-                  <p className="private-note">Secure sharing is currently disabled for this discovery.</p>
+                  <div className="locked-share-note">
+                      <p>Generate a <span>Private Link</span> above to enable sharing controls for this discovery.</p>
+                  </div>
                 )
               )}
             </div>
