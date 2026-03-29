@@ -91,9 +91,15 @@
 }
 
 .explore-footer-wrapper {
-    margin-top: 100px;
+    margin-top: 150px;
     width: 100%;
-    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.explore-separator {
+    border: none;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    width: 100%;
+    margin-bottom: 80px;
 }
 
 .bulky-badge {

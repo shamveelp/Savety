@@ -94,6 +94,7 @@ const Explore = () => {
 
       {!hasMore && uploads.length > 0 && (
         <div className="explore-footer-wrapper">
+          <hr className="explore-separator" />
           <div className="explore-end-gate">
             <p>You've reached the horizon of global discoveries.</p>
           </div>
