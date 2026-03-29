@@ -34,6 +34,7 @@ const OTPVerification = () => {
       // Save user to localStorage
       localStorage.setItem('user', JSON.stringify({
         token: response.token,
+        id: response.id,
         username: response.username,
         email: response.email
       }))

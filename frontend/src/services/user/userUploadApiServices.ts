@@ -37,3 +37,13 @@ export const deleteUpload = async (id: string) => {
   });
   return response.data;
 };
+
+export const updateUpload = async (id: string, formData: FormData) => {
+  const response = await axios.put(`${API_URL}/uploads/${id}`, formData, {
+    headers: {
+      ...getAuthHeader(),
+      'Content-Type': 'multipart/form-data',
+    }
+  });
+  return response.data;
+};

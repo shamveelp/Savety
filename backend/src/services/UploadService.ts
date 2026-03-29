@@ -53,6 +53,40 @@ export class UploadService implements IUploadService {
     return await this.uploadRepository.findById(id);
   }
 
+  async updateUpload(id: string, userId: string, data: any, newFiles?: any[]): Promise<IUpload | null> {
+    const existing = await this.uploadRepository.findById(id);
+    if (!existing || existing.userId.toString() !== userId) {
+      throw new Error('Forbidden or not found');
+    }
+
+    let updatedImages = [...(data.existingImages || [])];
+
+    // If there ARE new files, upload them
+    if (newFiles && newFiles.length > 0) {
+      const uploadPromises = newFiles.map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'savety/memories', resource_type: 'image' },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result?.secure_url || '');
+            }
+          );
+          stream.end(file.buffer);
+        });
+      });
+      const newUrls = await Promise.all(uploadPromises);
+      updatedImages = [...updatedImages, ...newUrls];
+    }
+
+    return await this.uploadRepository.update(id, {
+      title: data.title || existing.title,
+      description: data.description !== undefined ? data.description : existing.description,
+      visibility: data.visibility || existing.visibility,
+      images: updatedImages,
+    });
+  }
+
   async deleteUpload(id: string, userId: string): Promise<boolean> {
     const upload = await this.uploadRepository.findById(id);
     if (!upload || upload.userId.toString() !== userId) return false;

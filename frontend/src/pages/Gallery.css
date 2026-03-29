@@ -81,13 +81,13 @@
 
 .gallery-main-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
 }
 
 .gallery-card-item {
   background: white;
-  border-radius: 32px;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0,0,0,0.03);
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -96,7 +96,7 @@
 }
 
 .gallery-card-item:hover {
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
@@ -106,12 +106,14 @@
   height: 100%;
   text-decoration: none;
   color: inherit;
+  aspect-ratio: 3/4; /* Ensures consistent 3:1 content distribution */
 }
 
 .card-thumb {
   position: relative;
-  aspect-ratio: 4/5;
+  flex: 3; /* 75% of card height */
   background: #f0f0f0;
+  overflow: hidden;
 }
 
 .card-thumb img {
@@ -122,24 +124,24 @@
 
 .card-count {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 12px;
+  left: 12px;
   background: rgba(0,0,0,0.5);
   backdrop-filter: blur(8px);
   color: white;
-  padding: 6px 12px;
-  border-radius: 14px;
-  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 800;
 }
 
 .card-visibility {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  padding: 5px 12px;
-  border-radius: 14px;
-  font-size: 11px;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   color: white;
@@ -151,12 +153,12 @@
 
 .quick-view-btn {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
+  bottom: 12px;
+  right: 12px;
   background: white;
   color: #1a1a1a;
-  padding: 10px;
-  border-radius: 14px;
+  padding: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,14 +179,18 @@
 }
 
 .card-meta {
-  padding: 24px;
+  flex: 1; /* 25% of card height (the 1 in 3:1) */
+  padding: 16px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .card-meta h3 {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
   color: #1a1a1a;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -192,7 +198,7 @@
 
 .card-meta p {
   color: #999;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 }
 

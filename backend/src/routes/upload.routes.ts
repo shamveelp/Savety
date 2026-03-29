@@ -18,6 +18,9 @@ export const setupUploadRoutes = (container: Container): Router => {
   // Public/Protected: Details of a specific upload (internally handled visibility)
   router.get('/:id', optionalAuthMiddleware, (req, res) => uploadController.details(req, res));
 
+  // Protected: Update upload (edit metadata/images)
+  router.put('/:id', authMiddleware, multerUpload.array('images', 20), (req, res) => uploadController.update(req, res));
+
   // Protected: Remove upload
   router.delete('/:id', authMiddleware, (req, res) => uploadController.remove(req, res));
 

@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { userProfileService } from '../services/user/userProfileApiServices'
-import { getUserUploads } from '../services/user/userUploadApiServices'
 import toast from 'react-hot-toast'
 import './Profile.css'
 
 const Profile = () => {
   const [profile, setProfile] = useState<any>(null)
-  const [uploads, setUploads] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [username, setUsername] = useState('')
@@ -23,9 +21,6 @@ const Profile = () => {
       setProfile(profileData)
       setUsername(profileData.username)
       setEmail(profileData.email)
-
-      const uploadsData = await getUserUploads()
-      setUploads(uploadsData.uploads)
     } catch (error: any) {
       toast.error('Failed to load data.')
     } finally {
@@ -126,37 +121,6 @@ const Profile = () => {
             </div>
           </form>
         </div>
-      </div>
-
-      <div className="gallery-section">
-        <div className="gallery-header">
-          <h2>My Vault</h2>
-          <p>Your preserved memories</p>
-        </div>
-
-        {uploads.length > 0 ? (
-          <div className="gallery-grid">
-            {uploads.map((upload) => (
-              <Link to={`/upload/${upload._id}`} key={upload._id} className="gallery-item">
-                <div className="gallery-thumb">
-                  <img src={upload.images[0]} alt={upload.title} />
-                  {upload.images.length > 1 && (
-                    <div className="count-overlay">+{upload.images.length - 1}</div>
-                  )}
-                </div>
-                <div className="gallery-info">
-                  <h3>{upload.title}</h3>
-                  <span className={`vis-tag ${upload.visibility}`}>{upload.visibility}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-gallery">
-            <p>You haven't preserved any memories yet.</p>
-            <Link to="/upload" className="btn btn-primary">Start Preserving</Link>
-          </div>
-        )}
       </div>
     </div>
   )

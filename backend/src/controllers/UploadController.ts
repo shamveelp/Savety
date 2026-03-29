@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify';
 import { IUploadController } from '../interfaces/upload.controller.interface';
 import { IUploadService } from '../interfaces/upload.service.interface';
 import { TYPES } from '../core/types';
-import { CreateUploadSchema } from '../dtos/upload.dto';
+import { CreateUploadSchema, UpdateUploadSchema } from '../dtos/upload.dto';
 import logger from '../utils/logger';
 
 @injectable()
@@ -82,6 +82,38 @@ export class UploadController implements IUploadController {
       res.status(200).json({ upload });
     } catch (error: any) {
       logger.error('Upload details error:', error);
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  async update(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).user?.id;
+      
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
+      const validatedData = UpdateUploadSchema.parse(req.body);
+      const newFiles = req.files as Express.Multer.File[];
+
+      // Handle existingImages being a single string or an array
+      if (validatedData.existingImages && typeof validatedData.existingImages === 'string') {
+        validatedData.existingImages = [validatedData.existingImages];
+      }
+
+      const updated = await this.uploadService.updateUpload(id as string, userId as string, validatedData, newFiles);
+      
+      if (!updated) {
+        res.status(404).json({ message: 'Memory not found.' });
+        return;
+      }
+
+      res.status(200).json({ message: 'Memory refined successfully!', upload: updated });
+    } catch (error: any) {
+      logger.error('Upload update error:', error);
       res.status(400).json({ message: error.message });
     }
   }
