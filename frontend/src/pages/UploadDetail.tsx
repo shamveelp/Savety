@@ -83,8 +83,9 @@ const UploadDetail = () => {
 
   const handleDelete = async () => {
     try {
-      if (!id) return
-      await deleteUpload(id)
+      const uploadId = upload?._id || id
+      if (!uploadId) return
+      await deleteUpload(uploadId)
       toast.success('Memory removed from vault.')
       navigate('/gallery')
     } catch (error: any) {
@@ -93,7 +94,8 @@ const UploadDetail = () => {
   }
 
   const handleSave = async () => {
-    if (!id) return
+    const uploadId = upload?._id || id
+    if (!uploadId) return
     if (!editTitle || editTitle.length < 3) {
       toast.error('Title must be at least 3 characters.')
       return
@@ -119,8 +121,15 @@ const UploadDetail = () => {
 
     const toastId = toast.loading('Sychronizing your arrangement...')
     try {
-      const data = await updateUpload(id, formData)
+      const data = await updateUpload(uploadId as string, formData)
       setUpload(data.upload)
+      
+      // If title changed, the URL might change too!
+      if (data.upload.slug && data.upload.userId.username && (data.upload.slug !== slug || data.upload.userId.username !== username)) {
+          // Navigate to NEW SEO URL
+          navigate(`/${data.upload.userId.username}/${data.upload.slug}`, { replace: true })
+      }
+      
       setEditItems(data.upload.images.map((url: string) => ({
         id: Math.random().toString(36),
         type: 'existing',
