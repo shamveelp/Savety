@@ -12,7 +12,6 @@ const Footer = () => {
             <h4>Company</h4>
             <ul>
               <li><a href="/about">About</a></li>
-              <li><a href="/pricing">Pricing</a></li>
               <li><a href="https://github.com/shamveelp" target="_blank" rel="noopener noreferrer">GitHub</a></li>
               <li><a href="https://shamveelp.xyz" target="_blank" rel="noopener noreferrer">Website</a></li>
             </ul>
