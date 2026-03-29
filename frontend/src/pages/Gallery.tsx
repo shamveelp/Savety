@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getUserUploads } from '../services/user/userUploadApiServices'
 import toast from 'react-hot-toast'
+import Lightbox from '../components/Lightbox'
 import './Gallery.css'
 
 const Gallery = () => {
   const [uploads, setUploads] = useState<any[]>([])
   const [filteredUploads, setFilteredUploads] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [lightboxData, setLightboxData] = useState<{ images: string[], index: number } | null>(null)
   
   // Search, Sort, Filter states
   const [search, setSearch] = useState('')
@@ -102,19 +104,32 @@ const Gallery = () => {
       {filteredUploads.length > 0 ? (
         <div className="gallery-main-grid">
           {filteredUploads.map((upload) => (
-            <Link to={`/upload/${upload._id}`} key={upload._id} className="gallery-card-item">
-              <div className="card-thumb">
-                <img src={upload.images[0]} alt={upload.title} loading="lazy" />
-                {upload.images.length > 1 && (
-                  <div className="card-count">+{upload.images.length - 1}</div>
-                )}
-                <div className={`card-visibility ${upload.visibility}`}>{upload.visibility}</div>
-              </div>
-              <div className="card-meta">
-                <h3>{upload.title}</h3>
-                <p>{new Date(upload.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-              </div>
-            </Link>
+            <div key={upload._id} className="gallery-card-item">
+              <Link to={`/upload/${upload._id}`} className="card-link-wrapper">
+                <div className="card-thumb">
+                  <img src={upload.images[0]} alt={upload.title} loading="lazy" />
+                  {upload.images.length > 1 && (
+                    <div className="card-count">+{upload.images.length - 1}</div>
+                  )}
+                  <div className={`card-visibility ${upload.visibility}`}>{upload.visibility}</div>
+                </div>
+                <div className="card-meta">
+                  <h3>{upload.title}</h3>
+                  <p>{new Date(upload.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                </div>
+              </Link>
+              <button 
+                className="quick-view-btn" 
+                title="Quick View"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setLightboxData({ images: upload.images, index: 0 });
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
           ))}
         </div>
       ) : (
@@ -125,6 +140,14 @@ const Gallery = () => {
             <Link to="/upload" className="btn btn-primary" style={{marginTop: '20px'}}>Preserve First Memory</Link>
           )}
         </div>
+      )}
+
+      {lightboxData && (
+        <Lightbox 
+          images={lightboxData.images} 
+          initialIndex={lightboxData.index} 
+          onClose={() => setLightboxData(null)} 
+        />
       )}
     </div>
   )

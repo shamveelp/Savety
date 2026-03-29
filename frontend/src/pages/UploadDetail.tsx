@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { getUploadDetails, deleteUpload } from '../services/user/userUploadApiServices'
+import Lightbox from '../components/Lightbox'
 import './Upload.css'
 
 const UploadDetail = () => {
   const { id } = useParams()
   const [upload, setUpload] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -65,11 +67,23 @@ const UploadDetail = () => {
 
         <div className="detail-grid">
           {upload?.images.map((url: string, index: number) => (
-            <div key={index} className="detail-image-item">
+            <div 
+              key={index} 
+              className="detail-image-item"
+              onClick={() => setLightboxIndex(index)}
+            >
               <img src={url} alt={`Memory ${index}`} />
             </div>
           ))}
         </div>
+
+        {upload && lightboxIndex !== null && (
+          <Lightbox 
+            images={upload.images} 
+            initialIndex={lightboxIndex} 
+            onClose={() => setLightboxIndex(null)} 
+          />
+        )}
 
         <div className="detail-footer">
           <p>Preserved on {new Date(upload?.createdAt).toLocaleDateString()}</p>

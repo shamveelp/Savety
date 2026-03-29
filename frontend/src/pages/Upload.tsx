@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import './Upload.css'
 import { uploadMemories } from '../services/user/userUploadApiServices'
+import Lightbox from '../components/Lightbox'
 
 const Upload = () => {
   const [title, setTitle] = useState('')
@@ -11,6 +12,8 @@ const Upload = () => {
   const [files, setFiles] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  
   const fileInputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
 
@@ -52,7 +55,7 @@ const Upload = () => {
 
       await uploadMemories(formData)
       toast.success('Memories preserved successfully!')
-      navigate('/')
+      navigate('/gallery')
     } catch (error: any) {
       console.error("Upload error", error);
       toast.error(error.response?.data?.message || 'Upload failed. Please try again.')
@@ -71,7 +74,6 @@ const Upload = () => {
 
         <form onSubmit={handleUpload} className="upload-form">
           <div className="upload-layout">
-            {/* Left Column: Form Details */}
             <div className="upload-details">
               <div className="form-group">
                 <label htmlFor="title">Title</label>
@@ -127,7 +129,6 @@ const Upload = () => {
               </div>
             </div>
 
-            {/* Right Column: Image Dropzone */}
             <div className="upload-dropzone-section">
               <div 
                 className="dropzone"
@@ -160,7 +161,11 @@ const Upload = () => {
               {previews.length > 0 && (
                 <div className="preview-grid">
                   {previews.map((url, index) => (
-                    <div key={index} className="preview-item">
+                    <div 
+                      key={index} 
+                      className="preview-item"
+                      onClick={() => setLightboxIndex(index)}
+                    >
                       <img src={url} alt={`Preview ${index}`} />
                       <button 
                         type="button" 
@@ -196,6 +201,14 @@ const Upload = () => {
           </div>
         </form>
       </div>
+
+      {lightboxIndex !== null && (
+        <Lightbox 
+          images={previews} 
+          initialIndex={lightboxIndex} 
+          onClose={() => setLightboxIndex(null)} 
+        />
+      )}
     </div>
   )
 }

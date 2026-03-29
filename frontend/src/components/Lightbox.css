@@ -1,0 +1,188 @@
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4); /* Much more translucent */
+  backdrop-filter: blur(40px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: lbFadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  user-select: none;
+  overflow: hidden;
+  padding: 100px; /* More breathing room */
+}
+
+@keyframes lbFadeIn {
+  from { opacity: 0; filter: blur(20px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+.lightbox-controls {
+  position: absolute;
+  top: 40px;
+  right: 60px;
+  display: flex;
+  gap: 16px;
+  z-index: 10001;
+}
+
+.lb-close, .lb-zoom {
+  color: white;
+  opacity: 0.8;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-close:hover, .lb-zoom:hover {
+  background: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.lb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  opacity: 0.3;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  background: rgba(0,0,0,0.2);
+  padding: 30px;
+  border-radius: 50%;
+  z-index: 10001;
+}
+
+.lb-nav:hover:not(.disabled) {
+  opacity: 1;
+  background: rgba(0,0,0,0.6);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.lb-nav.disabled {
+  opacity: 0.05;
+  cursor: not-allowed;
+}
+
+.lb-nav.prev { left: 40px; }
+.lb-nav.next { right: 40px; }
+
+.lb-image-container { display: none; } /* Replaced by viewport system */
+
+.lb-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none; /* Crucial for custom touch handling */
+}
+
+.lb-viewport.animating {
+  opacity: 0;
+  transform: scale(0.98);
+}
+
+.lb-viewport:active {
+  cursor: grabbing;
+}
+
+.lb-transform-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.lb-transform-box img {
+  max-width: 80vw;
+  max-height: 80vh;
+  object-fit: contain;
+  pointer-events: none;
+  border-radius: 12px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.lb-nav.hidden {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.lb-counter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zoom-indicator {
+  background: var(--primary-green);
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-left: 8px;
+}
+
+.lb-reset {
+  color: white;
+  opacity: 0.5;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-reset:hover {
+  background: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  opacity: 1;
+}
+
+.lb-image-container img.zoomed {
+  cursor: zoom-out;
+}
+
+.lb-counter {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.5);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: rgba(255,255,255,0.05);
+  padding: 6px 16px;
+  border-radius: 20px;
+}
+
+@media (max-width: 768px) {
+  .lb-nav {
+    display: none; /* Swipe only on mobile or smaller icons? Hide for cleaner look */
+  }
+  .lightbox-controls {
+    top: 20px;
+    right: 20px;
+  }
+  .lb-image-container {
+    max-width: 95%;
+  }
+}
