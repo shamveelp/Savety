@@ -21,7 +21,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-
 // Dynamic CORS for multiple origins
 const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : ["http://localhost:5173"];
 app.use(cors({
