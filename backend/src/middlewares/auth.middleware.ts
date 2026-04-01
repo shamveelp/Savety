@@ -1,14 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { container } from '../core/container';
 import { TYPES } from '../core/types';
 import { IJWTService } from '../interfaces/jwt.service.interface';
 import logger from '../utils/logger';
 
-export interface AuthRequest extends Request {
-  user?: any;
-}
+import { RequestWithUser } from '../interfaces/request.interface';
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -23,7 +21,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
       return res.status(401).json({ message: 'Invalid or expired token.' });
     }
 
-    req.user = decoded;
+    req.user = decoded as { id: string; email?: string; username?: string };
     next();
   } catch (error) {
     logger.error('Auth middleware error:', error);
@@ -31,7 +29,7 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   }
 };
 
-export const optionalAuthMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const optionalAuthMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -39,11 +37,11 @@ export const optionalAuthMiddleware = (req: AuthRequest, res: Response, next: Ne
       const jwtService = container.get<IJWTService>(TYPES.JWTService);
       const decoded = jwtService.verifyToken(token);
       if (decoded) {
-        (req as any).user = decoded;
+        req.user = decoded as { id: string; email?: string; username?: string };
       }
     }
     next();
-  } catch (error) {
+  } catch {
     next();
   }
 };

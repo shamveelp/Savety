@@ -4,7 +4,7 @@ import { IUserRepository } from '../interfaces/user.repository.interface';
 
 @injectable()
 export class UserRepository implements IUserRepository {
-  async create(userData: any): Promise<IUser> {
+  async create(userData: Partial<IUser>): Promise<IUser> {
     return await User.create(userData);
   }
 
@@ -20,7 +20,7 @@ export class UserRepository implements IUserRepository {
     return await User.findOne({ username });
   }
 
-  async update(id: string, updateData: any): Promise<IUser | null> {
+  async update(id: string, updateData: Partial<IUser>): Promise<IUser | null> {
     return await User.findByIdAndUpdate(id, updateData, { new: true });
   }
 }

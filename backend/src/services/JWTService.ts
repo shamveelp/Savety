@@ -13,11 +13,11 @@ export class JWTService implements IJWTService {
     this.secret = process.env.JWT_SECRET || 'your_fallback_secret_key';
   }
 
-  generateToken(payload: any): string {
+  generateToken(payload: Record<string, unknown>): string {
     return jwt.sign(payload, this.secret, { expiresIn: '7d' });
   }
 
-  verifyToken(token: string): any {
-    return jwt.verify(token, this.secret);
+  verifyToken(token: string): Record<string, unknown> {
+    return jwt.verify(token, this.secret) as Record<string, unknown>;
   }
 }

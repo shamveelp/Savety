@@ -1,4 +1,5 @@
 import { injectable, inject } from 'inversify';
+import mongoose from 'mongoose';
 import cloudinary from '../config/cloudinary';
 import { IUploadService } from '../interfaces/upload.service.interface';
 import { IUploadRepository } from '../interfaces/upload.repository.interface';
@@ -22,7 +23,7 @@ export class UploadService implements IUploadService {
       .replace(/^-+|-+$/g, '');
   }
 
-  async createUpload(userId: string, data: CreateUploadDto, files: any[]): Promise<IUpload> {
+  async createUpload(userId: string, data: CreateUploadDto, files: Express.Multer.File[]): Promise<IUpload> {
     logger.info(`Processing ${files.length} images for User: ${userId}`);
     
     // Cloudinary bulk upload using streams for memory storage
@@ -53,10 +54,10 @@ export class UploadService implements IUploadService {
     }
 
     return await this.uploadRepository.create({
-      userId: userId as any,
+      userId: new mongoose.Types.ObjectId(userId) as unknown as mongoose.Types.ObjectId,
       title: data.title,
       description: data.description,
-      visibility: data.visibility as any,
+      visibility: data.visibility || 'private',
       images: imageUrls,
       slug: slug
     });
@@ -70,9 +71,9 @@ export class UploadService implements IUploadService {
     return await this.uploadRepository.findById(id);
   }
 
-  async updateUpload(id: string, userId: string, data: any, newFiles?: any[]): Promise<IUpload | null> {
+  async updateUpload(id: string, userId: string, data: Partial<CreateUploadDto> & { existingImages?: string[] }, newFiles?: Express.Multer.File[]): Promise<IUpload | null> {
     const existing = await this.uploadRepository.findById(id);
-    const existingUserId = (existing?.userId as any)?._id?.toString() || existing?.userId?.toString();
+    const existingUserId = (existing?.userId as unknown as { _id: { toString(): string } })?._id?.toString() || existing?.userId?.toString();
     if (!existing || existingUserId !== userId) {
       throw new Error('Forbidden or not found');
     }
@@ -97,7 +98,7 @@ export class UploadService implements IUploadService {
       updatedImages = [...updatedImages, ...newUrls];
     }
 
-    const updateData: any = {
+    const updateData: Partial<IUpload> = {
       title: data.title || existing.title,
       description: data.description !== undefined ? data.description : existing.description,
       visibility: data.visibility || existing.visibility,
@@ -121,7 +122,7 @@ export class UploadService implements IUploadService {
 
   async deleteUpload(id: string, userId: string): Promise<boolean> {
     const upload = await this.uploadRepository.findById(id);
-    const uploadUserId = (upload?.userId as any)?._id?.toString() || upload?.userId?.toString();
+    const uploadUserId = (upload?.userId as unknown as { _id: { toString(): string } })?._id?.toString() || upload?.userId?.toString();
     if (!upload || uploadUserId !== userId) return false;
     return await this.uploadRepository.delete(id);
   }
@@ -134,7 +135,7 @@ export class UploadService implements IUploadService {
     return await this.uploadRepository.toggleLike(uploadId, userId);
   }
 
-  async getPublicProfile(userId: string): Promise<any> {
+  async getPublicProfile(userId: string): Promise<Record<string, unknown>> {
     const uploads = await this.uploadRepository.findPublicByUserId(userId);
     return { uploads };
   }
@@ -145,7 +146,7 @@ export class UploadService implements IUploadService {
 
   async toggleShare(uploadId: string, userId: string): Promise<IUpload | null> {
     const upload = await this.uploadRepository.findById(uploadId);
-    const uploadUserId = (upload?.userId as any)?._id?.toString() || upload?.userId?.toString();
+    const uploadUserId = (upload?.userId as unknown as { _id: { toString(): string } })?._id?.toString() || upload?.userId?.toString();
     if (!upload || uploadUserId !== userId) return null;
 
     const shareEnabled = !upload.shareEnabled;
@@ -154,6 +155,6 @@ export class UploadService implements IUploadService {
     return await this.uploadRepository.update(uploadId, {
       shareEnabled,
       shareToken
-    } as any);
+    } as unknown as Partial<IUpload>);
   }
 }

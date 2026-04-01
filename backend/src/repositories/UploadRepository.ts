@@ -50,7 +50,7 @@ export class UploadRepository implements IUploadRepository {
     const index = likeStrings.indexOf(userId);
     
     if (index === -1) {
-      upload.likes.push(userId as any);
+      upload.likes.push(new mongoose.Types.ObjectId(userId));
     } else {
       upload.likes.splice(index, 1);
     }
@@ -77,7 +77,7 @@ export class UploadRepository implements IUploadRepository {
         if (mongoose.Types.ObjectId.isValid(slug)) {
             upload = await Upload.findById(slug).populate('userId', 'username email');
             // Ensure username matches if provided (extra safety)
-            if (upload && (upload.userId as any).username !== username) {
+            if (upload && (upload.userId as unknown as { username: string }).username !== username) {
                 return null;
             }
         } else {

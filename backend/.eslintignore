@@ -1,0 +1,6 @@
+node_modules/
+dist/
+coverage/
+.gitignore
+lint_report_backend.txt
+lint_report_v2.txt

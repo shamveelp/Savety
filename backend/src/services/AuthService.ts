@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import bcrypt from 'bcryptjs';
+import { IUser } from '../models/user.model';
 import { IAuthService } from '../interfaces/auth.service.interface';
 import { IUserRepository } from '../interfaces/user.repository.interface';
 import { IMailService } from '../interfaces/mail.service.interface';
@@ -54,17 +55,17 @@ export class AuthService implements IAuthService {
       throw new Error('Invalid or expired OTP.');
     }
 
-    const updatedUser = await this.userRepository.update((user as any)._id, { 
+    const updatedUser = await this.userRepository.update((user as unknown as { _id: string })._id, { 
       isVerified: true, 
       $unset: { otp: "", otpExpires: "" } 
-    });
+    } as unknown as Partial<IUser>);
 
     if (!updatedUser) throw new Error('Failed to update user verification status.');
 
-    const token = this.jwtService.generateToken({ id: (updatedUser as any)._id, email: updatedUser.email, username: updatedUser.username });
+    const token = this.jwtService.generateToken({ id: (updatedUser as unknown as { _id: string })._id, email: updatedUser.email, username: updatedUser.username });
 
     return {
-      id: (updatedUser as any)._id,
+      id: (updatedUser as unknown as { _id: string })._id,
       email: updatedUser.email,
       username: updatedUser.username,
       token
@@ -86,10 +87,10 @@ export class AuthService implements IAuthService {
       throw new Error('Invalid email or password.');
     }
 
-    const token = this.jwtService.generateToken({ id: (user as any)._id, email: user.email, username: user.username });
+    const token = this.jwtService.generateToken({ id: (user as unknown as { _id: string })._id, email: user.email, username: user.username });
 
     return {
-      id: (user as any)._id,
+      id: (user as unknown as { _id: string })._id,
       email: user.email,
       username: user.username,
       token
@@ -105,10 +106,10 @@ export class AuthService implements IAuthService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
-    await this.userRepository.update((user as any)._id, {
+    await this.userRepository.update((user as unknown as { _id: string })._id, {
       otp,
       otpExpires
-    });
+    } as unknown as Partial<IUser>);
 
     await this.mailService.sendOTP(email, otp);
   }
@@ -125,9 +126,9 @@ export class AuthService implements IAuthService {
 
     const hashedPassword = await bcrypt.hash(resetData.newPassword, 12);
 
-    await this.userRepository.update((user as any)._id, {
+    await this.userRepository.update((user as unknown as { _id: string })._id, {
       password: hashedPassword,
       $unset: { otp: "", otpExpires: "" }
-    });
+    } as unknown as Partial<IUser>);
   }
 }

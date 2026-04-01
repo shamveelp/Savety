@@ -1,4 +1,4 @@
 export interface IJWTService {
-  generateToken(payload: any): string;
-  verifyToken(token: string): any;
+  generateToken(payload: Record<string, unknown>): string;
+  verifyToken(token: string): Record<string, unknown>;
 }

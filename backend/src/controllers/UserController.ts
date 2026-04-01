@@ -1,4 +1,5 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { RequestWithUser } from '../interfaces/request.interface';
 import { inject, injectable } from 'inversify';
 import { IUserController } from '../interfaces/user.controller.interface';
 import { IUserService } from '../interfaces/user.service.interface';
@@ -12,30 +13,44 @@ export class UserController implements IUserController {
     @inject(TYPES.UserService) private userService: IUserService
   ) {}
 
-  async getProfile(req: any, res: Response): Promise<void> {
+  async getProfile(req: RequestWithUser, res: Response): Promise<void> {
     try {
+      if (!req.user?.id) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
       const userId = req.user.id;
       const profile = await this.userService.getProfile(userId);
       res.status(200).json(profile);
-    } catch (error: any) {
+    } catch (error) {
       logger.error('Get profile error:', error);
-      res.status(400).json({ message: error.message });
+      const err = error as Error;
+      res.status(400).json({ message: err.message });
     }
   }
 
-  async updateProfile(req: any, res: Response): Promise<void> {
+  async updateProfile(req: RequestWithUser, res: Response): Promise<void> {
     try {
+      if (!req.user?.id) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
       const userId = req.user.id;
       const updatedProfile = await this.userService.updateProfile(userId, req.body);
       res.status(200).json(updatedProfile);
-    } catch (error: any) {
+    } catch (error) {
       logger.error('Update profile error:', error);
-      res.status(400).json({ message: error.message });
+      const err = error as Error;
+      res.status(400).json({ message: err.message });
     }
   }
 
-  async updateAvatar(req: any, res: Response): Promise<void> {
+  async updateAvatar(req: RequestWithUser, res: Response): Promise<void> {
     try {
+      if (!req.user?.id) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
       const userId = req.user.id;
       if (!req.file) {
         res.status(400).json({ message: 'No image provided.' });
@@ -54,20 +69,26 @@ export class UserController implements IUserController {
 
       const updatedProfile = await this.userService.updateAvatar(userId, result.secure_url);
       res.status(200).json(updatedProfile);
-    } catch (error: any) {
+    } catch (error) {
       logger.error('Update avatar error:', error);
-      res.status(400).json({ message: error.message });
+      const err = error as Error;
+      res.status(400).json({ message: err.message });
     }
   }
 
-  async changePassword(req: any, res: Response): Promise<void> {
+  async changePassword(req: RequestWithUser, res: Response): Promise<void> {
     try {
+      if (!req.user?.id) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
       const userId = req.user.id;
       await this.userService.changePassword(userId, req.body);
       res.status(200).json({ message: 'Password updated successfully.' });
-    } catch (error: any) {
+    } catch (error) {
       logger.error('Change password error:', error);
-      res.status(400).json({ message: error.message });
+      const err = error as Error;
+      res.status(400).json({ message: err.message });
     }
   }
 }

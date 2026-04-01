@@ -22,7 +22,7 @@ async function migrate() {
     console.log(`Found ${uploads.length} uploads to migrate.`);
 
     for (const upload of uploads) {
-      let slug = (upload as any).title
+      let slug = (upload.title || '')
         .toLowerCase()
         .trim()
         .replace(/[^\w\s-]/g, '')

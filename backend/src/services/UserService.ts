@@ -16,19 +16,19 @@ export class UserService implements IUserService {
     if (!user) throw new Error('User not found.');
     
     return {
-      id: (user as any)._id.toString(),
+      id: (user as unknown as { _id: { toString(): string } })._id.toString(),
       username: user.username,
       email: user.email,
       profilePicture: user.profilePicture || '',
       isVerified: user.isVerified,
-      createdAt: (user as any).createdAt
+      createdAt: user.createdAt
     };
   }
 
   async updateProfile(userId: string, updateData: UpdateProfileRequestDTO): Promise<UserProfileResponseDTO> {
     if (updateData.email) {
       const existing = await this.userRepository.findByEmail(updateData.email);
-      if (existing && (existing as any)._id.toString() !== userId) {
+      if (existing && (existing as unknown as { _id: { toString(): string } })._id.toString() !== userId) {
         throw new Error('Email already in use.');
       }
     }
