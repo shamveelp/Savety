@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { OTPVerifySchema, type OTPVerifyInput } from '../validations/auth.validation'
 import { userAuthService } from '../services/user/userAuthApiServices'
+import type { ApiError } from '../types/api'
 import toast, { Toaster } from 'react-hot-toast'
 import Navbar from '../components/Navbar'
 import './Auth.css'
@@ -44,8 +45,9 @@ const OTPVerification = () => {
         navigate('/')
         window.location.reload() // Refresh to update navbar
       }, 1500)
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Invalid OTP. Please try again.')
+    } catch (error) {
+      const err = error as ApiError;
+      toast.error(err.response?.data?.message || 'Invalid OTP. Please try again.')
     } finally {
       setLoading(false)
     }

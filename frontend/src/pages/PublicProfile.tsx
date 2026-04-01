@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import type { Upload } from '../types/upload'
+import type { User } from '../types/user'
 import toast from 'react-hot-toast'
 import { getPublicProfile } from '../services/user/userUploadApiServices'
 import './PublicProfile.css'
@@ -7,29 +9,29 @@ import './PublicProfile.css'
 const PublicProfile = () => {
   const { userId } = useParams()
   const navigate = useNavigate()
-  const [uploads, setUploads] = useState<any[]>([])
+  const [uploads, setUploads] = useState<Upload[]>([])
   const [loading, setLoading] = useState(true)
-  const [author, setAuthor] = useState<any>(null)
+  const [author, setAuthor] = useState<User | null>(null)
 
-  useEffect(() => {
-    fetchProfile()
-  }, [userId])
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     if (!userId) return
     try {
       const data = await getPublicProfile(userId)
       setUploads(data.uploads)
       if (data.uploads.length > 0) {
-        setAuthor(data.uploads[0].userId)
+        setAuthor(data.uploads[0].userId as User)
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to resolve this profile.')
       navigate('/explore')
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId, navigate])
+
+  useEffect(() => {
+    fetchProfile()
+  }, [userId, fetchProfile])
 
   if (loading) return <div className="profile-loading">Decoding portfolio...</div>
 

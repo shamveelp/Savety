@@ -1,9 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import type { User } from '../types/user'
 import './Navbar.css'
 
 const Navbar = () => {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = localStorage.getItem('user')
+    if (stored) {
+      try {
+        return JSON.parse(stored)
+      } catch {
+        return null
+      }
+    }
+    return null
+  })
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -12,15 +23,6 @@ const Navbar = () => {
   const isAuthPage = ['/login', '/signup', '/verify-otp', '/forgot-password'].includes(location.pathname)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser))
-      } catch (e) {
-        console.error("Parse error", e)
-      }
-    }
-
     // Click outside listener
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

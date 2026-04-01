@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import type { User } from '../types/user'
+import type { ApiError } from '../types/api'
 import { userProfileService } from '../services/user/userProfileApiServices'
 import toast from 'react-hot-toast'
 import './Profile.css'
 
 const Profile = () => {
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [username, setUsername] = useState('')
@@ -21,7 +23,7 @@ const Profile = () => {
       setProfile(profileData)
       setUsername(profileData.username)
       setEmail(profileData.email)
-    } catch (error: any) {
+    } catch {
       toast.error('Failed to load data.')
     } finally {
       setLoading(false)
@@ -39,8 +41,9 @@ const Profile = () => {
       localStorage.setItem('user', JSON.stringify({ ...stored, username, email }))
       
       toast.success('Profile updated successfully!')
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Update failed.')
+    } catch (error) {
+      const err = error as ApiError;
+      toast.error(err.response?.data?.message || 'Update failed.')
     } finally {
       setUpdating(false)
     }
@@ -58,7 +61,7 @@ const Profile = () => {
       const updated = await userProfileService.updateAvatar(formData)
       setProfile(updated)
       toast.success('Avatar updated!', { id: toastId })
-    } catch (error: any) {
+    } catch {
       toast.error('Avatar upload failed.', { id: toastId })
     }
   }

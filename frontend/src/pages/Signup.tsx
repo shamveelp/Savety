@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SignupSchema, type SignupInput } from '../validations/auth.validation'
 import { userAuthService } from '../services/user/userAuthApiServices'
+import type { ApiError } from '../types/api'
 import toast from 'react-hot-toast'
 import './Auth.css'
 
@@ -22,8 +23,9 @@ const Signup = () => {
       const response = await userAuthService.signup(data)
       toast.success(response.message || 'OTP sent to your email!')
       navigate('/verify-otp', { state: { email: data.email } })
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Something went wrong. Please try again.')
+    } catch (error) {
+      const err = error as ApiError;
+      toast.error(err.response?.data?.message || 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }

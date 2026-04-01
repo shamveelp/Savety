@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { UpdateProfileInput, ChangePasswordInput, ResetPasswordInput } from '../../types/user'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1/user';
 
@@ -13,7 +14,7 @@ export const userProfileService = {
     return response.data;
   },
 
-  updateProfile: async (data: any) => {
+  updateProfile: async (data: UpdateProfileInput) => {
     const response = await axios.patch(`${API_URL}/profile`, data, { headers: getAuthHeader() });
     return response.data;
   },
@@ -28,7 +29,7 @@ export const userProfileService = {
     return response.data;
   },
 
-  changePassword: async (data: any) => {
+  changePassword: async (data: ChangePasswordInput) => {
     const response = await axios.post(`${API_URL}/change-password`, data, { headers: getAuthHeader() });
     return response.data;
   },
@@ -38,7 +39,7 @@ export const userProfileService = {
     return response.data;
   },
 
-  resetPassword: async (data: any) => {
+  resetPassword: async (data: ResetPasswordInput) => {
     const response = await axios.post(`${API_URL}/auth/reset-password`, data);
     return response.data;
   },

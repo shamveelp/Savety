@@ -4,8 +4,10 @@ import toast from 'react-hot-toast'
 import { toggleLike } from '../services/user/userUploadApiServices'
 import './DiscoveryPost.css'
 
+import type { Upload } from '../types/upload'
+
 interface DiscoveryPostProps {
-  upload: any;
+  upload: Upload;
   currentUserId?: string;
 }
 
@@ -30,7 +32,7 @@ const DiscoveryPost = ({ upload, currentUserId }: DiscoveryPostProps) => {
       const data = await toggleLike(upload._id)
       setLikes(data.likesCount)
       setIsLiked(data.isLiked)
-    } catch (error) {
+    } catch {
       toast.error('Engagement failed.')
     } finally {
       setIsToggling(false)
@@ -103,7 +105,7 @@ const DiscoveryPost = ({ upload, currentUserId }: DiscoveryPostProps) => {
                 </button>
               )}
               <div className="post-dots">
-                {upload.images.map((_: any, i: number) => (
+                {upload.images.map((_, i) => (
                   <span key={i} className={`dot ${i === activeIdx ? 'active' : ''}`} />
                 ))}
               </div>

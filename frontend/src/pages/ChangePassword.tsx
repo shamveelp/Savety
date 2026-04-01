@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { userProfileService } from '../services/user/userProfileApiServices'
+import type { ApiError } from '../types/api'
 import toast from 'react-hot-toast'
 import './Auth.css'
 
@@ -23,8 +24,9 @@ const ChangePassword = () => {
       await userProfileService.changePassword({ oldPassword, newPassword })
       toast.success('Password updated!')
       navigate('/profile')
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Update failed.')
+    } catch (error) {
+      const err = error as ApiError;
+      toast.error(err.response?.data?.message || 'Update failed.')
     } finally {
       setLoading(false)
     }

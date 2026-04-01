@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import './Upload.css'
 import { uploadMemories } from '../services/user/userUploadApiServices'
+import type { ApiError } from '../types/api'
 import Lightbox from '../components/Lightbox'
 
 const Upload = () => {
@@ -19,12 +20,16 @@ const Upload = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files)
-      setFiles((prev) => [...prev, ...selectedFiles])
-
-      const newPreviews = selectedFiles.map(file => URL.createObjectURL(file))
-      setPreviews((prev) => [...prev, ...newPreviews])
+      appendFiles(e.target.files)
     }
+  }
+
+  const appendFiles = (fileList: FileList) => {
+    const selectedFiles = Array.from(fileList)
+    setFiles((prev) => [...prev, ...selectedFiles])
+
+    const newPreviews = selectedFiles.map(file => URL.createObjectURL(file))
+    setPreviews((prev) => [...prev, ...newPreviews])
   }
 
   const removeFile = (index: number) => {
@@ -56,9 +61,10 @@ const Upload = () => {
       await uploadMemories(formData)
       toast.success('Memories preserved successfully!')
       navigate('/gallery')
-    } catch (error: any) {
-      console.error("Upload error", error);
-      toast.error(error.response?.data?.message || 'Upload failed. Please try again.')
+    } catch (error) {
+      const err = error as ApiError;
+      console.error("Upload error", err);
+      toast.error(err.response?.data?.message || 'Upload failed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -137,7 +143,7 @@ const Upload = () => {
                 onDrop={(e) => {
                   e.preventDefault()
                   if (e.dataTransfer.files) {
-                    handleFileChange({ target: { files: e.dataTransfer.files } } as any)
+                    appendFiles(e.dataTransfer.files)
                   }
                 }}
               >

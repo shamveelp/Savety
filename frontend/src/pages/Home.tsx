@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import type { User } from '../types/user'
 import '../App.css'
 import Footer from '../components/Footer'
 import FAQ from '../components/FAQ'
@@ -26,17 +27,20 @@ import avatar2 from '../assets/reviews/avatar2.png'
 import avatar3 from '../assets/reviews/avatar3.png'
 
 function Home() {
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+  const [user] = useState<User | null>(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
       try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Invalid session", e);
+        return JSON.parse(stored);
+      } catch {
+        return null;
       }
     }
+    return null;
+  });
+
+  useEffect(() => {
+    // Session is already initialized in state
   }, []);
 
   return (

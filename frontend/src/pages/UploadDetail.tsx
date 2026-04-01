@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import type { Upload } from '../types/upload'
+import type { ApiError } from '../types/api'
 import toast from 'react-hot-toast'
 import { getUploadDetails, deleteUpload, updateUpload, getUploadBySlug, toggleShare } from '../services/user/userUploadApiServices'
 import Lightbox from '../components/Lightbox'
@@ -14,12 +16,18 @@ type EditItem = {
   isRemoved?: boolean;
 }
 
+interface ExtendedWindow extends Window {
+  html2canvas?: (element: HTMLElement, options: Record<string, unknown>) => Promise<HTMLCanvasElement>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  JSZip?: any; 
+}
+
 const UploadDetail = () => {
   const { id, username, slug } = useParams()
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [upload, setUpload] = useState<any>(null)
+  const [upload, setUpload] = useState<Upload | null>(null)
   const [loading, setLoading] = useState(true)
   const [isAuthor, setIsAuthor] = useState(false)
   
@@ -37,9 +45,6 @@ const UploadDetail = () => {
   const [showShareModal, setShowShareModal] = useState(false)
   const [generatingShare, setGeneratingShare] = useState(false)
 
-  useEffect(() => {
-    fetchDetails()
-  }, [id, username, slug])
 
   const handleToggleShare = async () => {
     try {
@@ -49,7 +54,7 @@ const UploadDetail = () => {
       const data = await toggleShare(uploadId)
       setUpload(data.upload)
       toast.success(data.message)
-    } catch (error: any) {
+    } catch {
       toast.error('Failed to update sharing permissions.')
     } finally {
       setGeneratingShare(false)
@@ -58,7 +63,7 @@ const UploadDetail = () => {
 
   const downloadTicket = async () => {
     const ticketEl = document.querySelector('.access-ticket') as HTMLElement
-    if (!ticketEl) {
+    if (!ticketEl || !upload) {
         toast.error('Target asset not identified.')
         return
     }
@@ -67,7 +72,8 @@ const UploadDetail = () => {
     
     try {
       // Load html2canvas dynamically if not present
-      if (!(window as any).html2canvas) {
+      const win = window as unknown as ExtendedWindow;
+      if (!win.html2canvas) {
         await new Promise((resolve, reject) => {
           const script = document.createElement('script')
           script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
@@ -77,7 +83,8 @@ const UploadDetail = () => {
         })
       }
 
-      const canvas = await (window as any).html2canvas(ticketEl, {
+      if (!win.html2canvas) return;
+      const canvas = await win.html2canvas(ticketEl, {
           backgroundColor: null, // Transparent/Theme handled by CSS
           scale: 3, // Premium print quality
           useCORS: true,
@@ -99,7 +106,7 @@ const UploadDetail = () => {
     }
   }
 
-  const fetchDetails = async () => {
+  const fetchDetails = useCallback(async () => {
     try {
       setLoading(true)
       const searchParams = new URLSearchParams(window.location.search)
@@ -120,9 +127,11 @@ const UploadDetail = () => {
         try {
           const payload = JSON.parse(window.atob(user.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
           currentUserId = payload.id
-        } catch (e) {}
+        } catch { /* ignore parse error */ }
       }
-      setIsAuthor(currentUserId === data.upload.userId._id || currentUserId === data.upload.userId)
+      
+      const uploadUserId = (data.upload.userId as { _id?: string })._id || data.upload.userId;
+      setIsAuthor(currentUserId === uploadUserId)
       
       // Default Edit States
       setEditTitle(data.upload.title)
@@ -135,14 +144,19 @@ const UploadDetail = () => {
         preview: url,
         isRemoved: false
       })))
-    } catch (error: any) {
-      if (error.response?.status === 403) toast.error('This memory is private.')
+    } catch (error) {
+      const err = error as ApiError;
+      if (err.response?.status === 403) toast.error('This memory is private.')
       else toast.error('Failed to load memory.')
       navigate('/gallery')
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, username, slug, navigate])
+
+  useEffect(() => {
+    fetchDetails()
+  }, [id, username, slug, fetchDetails])
 
   const handleDelete = async () => {
     try {
@@ -151,7 +165,7 @@ const UploadDetail = () => {
       await deleteUpload(uploadId)
       toast.success('Memory removed from vault.')
       navigate('/gallery')
-    } catch (error: any) {
+    } catch {
       toast.error('Failed to remove memory.')
     }
   }
@@ -202,7 +216,7 @@ const UploadDetail = () => {
       })))
       setIsEditing(false)
       toast.success('Arrangement preserved!', { id: toastId })
-    } catch (error: any) {
+    } catch {
       toast.error('Sync failed.', { id: toastId })
     } finally {
       setSaving(false)
@@ -218,13 +232,13 @@ const UploadDetail = () => {
       const blobUrl = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = blobUrl
-      a.download = `${upload.title.replace(/\s+/g, '_')}_${index}.jpg`
+      a.download = `${upload?.title.replace(/\s+/g, '_') || 'image'}_${index}.jpg`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(blobUrl)
       document.body.removeChild(a)
       toast.success('Asset preserved locally.', { id: toastId })
-    } catch (e) {
+    } catch {
       toast.error('Retrieval failed.', { id: toastId })
     }
   }
@@ -235,7 +249,8 @@ const UploadDetail = () => {
     
     try {
       // Load JSZip dynamically
-      if (!(window as any).JSZip) {
+      const win = window as unknown as ExtendedWindow;
+      if (!win.JSZip) {
         await new Promise((resolve, reject) => {
           const script = document.createElement('script')
           script.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
@@ -245,7 +260,7 @@ const UploadDetail = () => {
         })
       }
 
-      const zip = new (window as any).JSZip()
+      const zip = new win.JSZip()
       const folder = zip.folder(upload.title.replace(/\s+/g, '_'))
 
       // Fetch all images
@@ -311,6 +326,7 @@ const UploadDetail = () => {
   }
 
   if (loading) return <div className="profile-loading">Exploring vault...</div>
+  if (!upload) return null
 
   return (
     <div className="upload-detail-page">
@@ -474,7 +490,7 @@ const UploadDetail = () => {
 
         {/* Footer */}
         <div className="detail-footer">
-          <p>Preserved by {isAuthor ? 'You' : (upload?.username || 'Member')} on {new Date(upload?.createdAt).toLocaleDateString()}</p>
+          <p>Preserved by {isAuthor ? 'You' : (upload.userId?.username || 'Member')} on {upload.createdAt ? new Date(upload.createdAt).toLocaleDateString() : 'N/A'}</p>
           {(upload?.visibility === 'public' || (upload?.visibility === 'unlisted' && upload?.shareEnabled)) && !isEditing && (
             <div className="share-section">
               <input 

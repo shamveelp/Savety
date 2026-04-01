@@ -1,0 +1,14 @@
+﻿
+> frontend@0.0.0 lint
+> eslint .
+
+
+D:\001 Final Projects\Savety\frontend\src\pages\UploadDetail.tsx
+   69:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   79:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  244:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  254:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 5 problems (5 errors, 0 warnings)
+

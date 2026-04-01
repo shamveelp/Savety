@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import type { Upload } from '../types/upload'
 import toast from 'react-hot-toast'
 import { getExploreUploads } from '../services/user/userUploadApiServices'
 import MemoryTile from '../components/MemoryTile'
@@ -9,13 +10,13 @@ import './Explore.css'
 
 const Explore = () => {
   const navigate = useNavigate()
-  const [uploads, setUploads] = useState<any[]>([])
+  const [uploads, setUploads] = useState<Upload[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const observer = useRef<IntersectionObserver | null>(null)
 
-  const fetchUploads = async (pageNum: number) => {
+  const fetchUploads = useCallback(async (pageNum: number) => {
     if (loading) return
     setLoading(true)
     try {
@@ -26,16 +27,16 @@ const Explore = () => {
         const combined = [...prev, ...data.uploads]
         return Array.from(new Map(combined.map(u => [u._id, u])).values())
       })
-    } catch (error) {
+    } catch {
       toast.error('Failed to resolve global discoveries.')
     } finally {
       setLoading(false)
     }
-  }
+  }, [loading])
 
   useEffect(() => {
     fetchUploads(page)
-  }, [page])
+  }, [page, fetchUploads])
 
   const lastElementRef = useCallback((node: HTMLDivElement) => {
     if (loading) return

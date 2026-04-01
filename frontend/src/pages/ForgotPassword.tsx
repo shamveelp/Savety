@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { userProfileService } from '../services/user/userProfileApiServices'
+import type { ApiError } from '../types/api'
 import toast from 'react-hot-toast'
 import './Auth.css'
 
@@ -21,8 +22,9 @@ const ForgotPassword = () => {
       await userProfileService.forgotPassword(email)
       toast.success('Verification OTP sent!')
       setStep(2)
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to send OTP.')
+    } catch (error) {
+      const err = error as ApiError;
+      toast.error(err.response?.data?.message || 'Failed to send OTP.')
     } finally {
       setLoading(false)
     }
@@ -37,8 +39,9 @@ const ForgotPassword = () => {
       await userProfileService.resetPassword({ email, otp, newPassword })
       toast.success('Password reset successful!')
       navigate('/login')
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Reset failed.')
+    } catch (error) {
+      const err = error as ApiError;
+      toast.error(err.response?.data?.message || 'Reset failed.')
     } finally {
       setLoading(false)
     }

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import type { Upload } from '../types/upload'
 import { getUserUploads } from '../services/user/userUploadApiServices'
 import toast from 'react-hot-toast'
 import Lightbox from '../components/Lightbox'
@@ -7,8 +8,8 @@ import Loading from '../components/common/Loading'
 import './Gallery.css'
 
 const Gallery = () => {
-  const [uploads, setUploads] = useState<any[]>([])
-  const [filteredUploads, setFilteredUploads] = useState<any[]>([])
+  const [uploads, setUploads] = useState<Upload[]>([])
+  const [filteredUploads, setFilteredUploads] = useState<Upload[]>([])
   const [loading, setLoading] = useState(true)
   const [lightboxData, setLightboxData] = useState<{ images: string[], index: number } | null>(null)
   
@@ -21,22 +22,18 @@ const Gallery = () => {
     fetchUploads()
   }, [])
 
-  useEffect(() => {
-    applyFilters()
-  }, [search, sortBy, filterBy, uploads])
-
   const fetchUploads = async () => {
     try {
       const data = await getUserUploads()
       setUploads(data.uploads || [])
-    } catch (error: any) {
+    } catch {
       toast.error('Failed to load your gallery.')
     } finally {
       setLoading(false)
     }
   }
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let result = [...uploads]
 
     // 1. Search (Title)
@@ -59,7 +56,11 @@ const Gallery = () => {
     }
 
     setFilteredUploads(result)
-  }
+  }, [uploads, search, sortBy, filterBy])
+
+  useEffect(() => {
+    applyFilters()
+  }, [search, sortBy, filterBy, uploads, applyFilters])
 
   if (loading) return <Loading />
 
