@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import type { Upload } from '../types/upload'
 import type { ApiError } from '../types/api'
@@ -44,7 +44,91 @@ const UploadDetail = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
   const [generatingShare, setGeneratingShare] = useState(false)
+  const [sortBy, setSortBy] = useState<'default' | 'size-desc' | 'size-asc' | 'resolution-desc' | 'resolution-asc'>('default')
+  
+  const [dynamicMeta, setDynamicMeta] = useState<Record<string, { size: number, resolution: number }>>({})
+  const [isSorting, setIsSorting] = useState(false)
 
+  useEffect(() => {
+    if (sortBy !== 'default' && upload) {
+      const missingUrls = upload.images.filter(url => 
+        !upload.imagesMeta?.find(m => m.url === url) && !dynamicMeta[url]
+      )
+      
+      if (missingUrls.length > 0 && !isSorting) {
+        const fetchMeta = async () => {
+          setIsSorting(true)
+          const toastId = toast.loading('Analyzing older memories for sorting...')
+          const newMetas = { ...dynamicMeta }
+          
+          await Promise.all(missingUrls.map(async url => {
+            try {
+              let size = 0
+              try {
+                const res = await fetch(url)
+                const blob = await res.blob()
+                size = blob.size
+              } catch {
+                size = 0
+              }
+              
+              const resolution = await new Promise<number>((resolve) => {
+                 const img = new window.Image()
+                 img.onload = () => resolve(img.width * img.height)
+                 img.onerror = () => resolve(0)
+                 img.src = url
+              })
+              newMetas[url] = { size, resolution }
+            } catch {
+              newMetas[url] = { size: 0, resolution: 0 }
+            }
+          }))
+          
+          setDynamicMeta(newMetas)
+          setIsSorting(false)
+          toast.success('Sorting complete.', { id: toastId })
+        }
+        fetchMeta()
+      }
+    }
+  }, [sortBy, upload, dynamicMeta, isSorting])
+
+  const sortedImages = useMemo(() => {
+    if (!upload) return []
+    if (sortBy === 'default') return upload.images
+
+    const items = upload.images.map(url => {
+      let size = 0
+      let resolution = 0
+      
+      const meta = upload.imagesMeta?.find(m => m.url === url)
+      if (meta) {
+        size = meta.size
+        resolution = meta.width * meta.height
+      } else if (dynamicMeta[url]) {
+        size = dynamicMeta[url].size
+        resolution = dynamicMeta[url].resolution
+      }
+
+      return {
+        url,
+        size,
+        resolution
+      }
+    })
+
+    if (sortBy === 'size-desc') {
+      items.sort((a, b) => b.size - a.size)
+    } else if (sortBy === 'size-asc') {
+      items.sort((a, b) => a.size - b.size)
+    } else if (sortBy === 'resolution-desc') {
+      items.sort((a, b) => b.resolution - a.resolution)
+    } else if (sortBy === 'resolution-asc') {
+      items.sort((a, b) => a.resolution - b.resolution)
+    }
+
+    return items.map(i => i.url)
+  }, [upload, sortBy, dynamicMeta])
 
   const handleToggleShare = async () => {
     try {
@@ -430,6 +514,19 @@ const UploadDetail = () => {
           )}
         </div>
 
+        {!isEditing && upload?.images && upload.images.length > 1 && (
+          <div className="sorting-controls">
+            <label>Sort by:</label>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} disabled={isSorting}>
+              <option value="default">Default</option>
+              <option value="size-desc">Size (Largest first)</option>
+              <option value="size-asc">Size (Smallest first)</option>
+              <option value="resolution-desc">Resolution (Highest first)</option>
+              <option value="resolution-asc">Resolution (Lowest first)</option>
+            </select>
+          </div>
+        )}
+
         {/* Dynamic Image Grid with DnD */}
         <div className="detail-grid">
           {isEditing ? (
@@ -468,9 +565,9 @@ const UploadDetail = () => {
               </div>
             </>
           ) : (
-            upload?.images.map((url: string, index: number) => (
+            sortedImages.map((url: string, index: number) => (
               <MemoryTile 
-                key={index} 
+                key={url} 
                 url={url} 
                 index={index} 
                 className="group" 
@@ -508,7 +605,7 @@ const UploadDetail = () => {
       </div>
 
       {upload && lightboxIndex !== null && (
-        <Lightbox images={upload.images} initialIndex={lightboxIndex} onClose={() => setLightboxIndex(null)} />
+        <Lightbox images={sortedImages} initialIndex={lightboxIndex} onClose={() => setLightboxIndex(null)} />
       )}
 
       {/* Share Modal & Ticket */}

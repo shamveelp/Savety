@@ -6,6 +6,12 @@ export interface Upload {
   title: string;
   description?: string;
   images: string[];
+  imagesMeta?: {
+    url: string;
+    size: number;
+    width: number;
+    height: number;
+  }[];
   likes: string[];
   likesCount?: number;
   isLiked?: boolean;

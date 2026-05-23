@@ -325,6 +325,33 @@
   text-align: center;
 }
 
+.sorting-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.sorting-controls select {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1.5px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.sorting-controls select:focus {
+  border-color: var(--primary-green);
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

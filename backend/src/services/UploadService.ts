@@ -4,7 +4,7 @@ import cloudinary from '../config/cloudinary';
 import { IUploadService } from '../interfaces/upload.service.interface';
 import { IUploadRepository } from '../interfaces/upload.repository.interface';
 import { TYPES } from '../core/types';
-import { IUpload } from '../models/upload.model';
+import { IUpload, IImageMeta } from '../models/upload.model';
 import { CreateUploadDto } from '../dtos/upload.dto';
 import logger from '../utils/logger';
 
@@ -28,7 +28,7 @@ export class UploadService implements IUploadService {
     
     // Cloudinary bulk upload using streams for memory storage
     const uploadPromises = files.map((file) => {
-      return new Promise<string>((resolve, reject) => {
+      return new Promise<IImageMeta>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: 'savety/memories', resource_type: 'image' },
           (error, result) => {
@@ -36,14 +36,20 @@ export class UploadService implements IUploadService {
               logger.error('Cloudinary stream upload error', error);
               return reject(error);
             }
-            resolve(result?.secure_url || '');
+            resolve({
+              url: result?.secure_url || '',
+              size: result?.bytes || 0,
+              width: result?.width || 0,
+              height: result?.height || 0
+            });
           }
         );
         stream.end(file.buffer);
       });
     });
 
-    const imageUrls = await Promise.all(uploadPromises);
+    const uploadedImagesMeta = await Promise.all(uploadPromises);
+    const imageUrls = uploadedImagesMeta.map(m => m.url);
     logger.info(`Successfully uploaded ${imageUrls.length} images to Cloudinary`);
 
     const slug = this.generateSlug(data.title);
@@ -59,6 +65,7 @@ export class UploadService implements IUploadService {
       description: data.description,
       visibility: data.visibility || 'private',
       images: imageUrls,
+      imagesMeta: uploadedImagesMeta,
       slug: slug
     });
   }
@@ -79,23 +86,31 @@ export class UploadService implements IUploadService {
     }
 
     let updatedImages = [...(data.existingImages || [])];
+    let updatedImagesMeta = existing.imagesMeta ? [...existing.imagesMeta] : [];
+    updatedImagesMeta = updatedImagesMeta.filter(meta => updatedImages.includes(meta.url));
 
     // If there ARE new files, upload them
     if (newFiles && newFiles.length > 0) {
       const uploadPromises = newFiles.map((file) => {
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<IImageMeta>((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
             { folder: 'savety/memories', resource_type: 'image' },
             (error, result) => {
               if (error) return reject(error);
-              resolve(result?.secure_url || '');
+              resolve({
+                url: result?.secure_url || '',
+                size: result?.bytes || 0,
+                width: result?.width || 0,
+                height: result?.height || 0
+              });
             }
           );
           stream.end(file.buffer);
         });
       });
-      const newUrls = await Promise.all(uploadPromises);
-      updatedImages = [...updatedImages, ...newUrls];
+      const newMetas = await Promise.all(uploadPromises);
+      updatedImages = [...updatedImages, ...newMetas.map(m => m.url)];
+      updatedImagesMeta = [...updatedImagesMeta, ...newMetas];
     }
 
     const updateData: Partial<IUpload> = {
@@ -103,6 +118,7 @@ export class UploadService implements IUploadService {
       description: data.description !== undefined ? data.description : existing.description,
       visibility: data.visibility || existing.visibility,
       images: updatedImages,
+      imagesMeta: updatedImagesMeta,
     };
 
     if (!existing.slug || (data.title && data.title !== existing.title)) {

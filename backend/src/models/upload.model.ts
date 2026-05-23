@@ -1,11 +1,19 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export interface IImageMeta {
+  url: string;
+  size: number;
+  width: number;
+  height: number;
+}
+
 export interface IUpload extends Document {
   userId: mongoose.Types.ObjectId;
   title: string;
   description?: string;
   visibility: 'public' | 'private' | 'unlisted';
   images: string[]; // Cloudinary URLs
+  imagesMeta?: IImageMeta[];
   likes: mongoose.Types.ObjectId[];
   slug: string;
   shareToken?: string;
@@ -24,6 +32,15 @@ const UploadSchema: Schema = new Schema({
     default: 'private' 
   },
   images: [{ type: String, required: true }],
+  imagesMeta: {
+    type: [{
+      url: { type: String, required: true },
+      size: { type: Number, required: true },
+      width: { type: Number, required: true },
+      height: { type: Number, required: true }
+    }],
+    default: []
+  },
   likes: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
   slug: { type: String, required: true, index: true },
   shareToken: { type: String, default: null },
