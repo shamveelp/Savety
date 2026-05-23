@@ -15,9 +15,11 @@ const Explore = () => {
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const observer = useRef<IntersectionObserver | null>(null)
+  const loadingRef = useRef(false)
 
   const fetchUploads = useCallback(async (pageNum: number) => {
-    if (loading) return
+    if (loadingRef.current) return
+    loadingRef.current = true
     setLoading(true)
     try {
       const data = await getExploreUploads(pageNum, 12)
@@ -30,26 +32,26 @@ const Explore = () => {
     } catch {
       toast.error('Failed to resolve global discoveries.')
     } finally {
+      loadingRef.current = false
       setLoading(false)
     }
-  }, [loading])
+  }, [])
 
   useEffect(() => {
     fetchUploads(page)
   }, [page, fetchUploads])
 
   const lastElementRef = useCallback((node: HTMLDivElement) => {
-    if (loading) return
     if (observer.current) observer.current.disconnect()
     
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
+      if (entries[0].isIntersecting && hasMore && !loadingRef.current) {
         setPage(prev => prev + 1)
       }
     })
     
     if (node) observer.current.observe(node)
-  }, [loading, hasMore])
+  }, [hasMore])
 
   return (
     <>
