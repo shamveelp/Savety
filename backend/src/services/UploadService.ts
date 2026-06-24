@@ -7,6 +7,7 @@ import { TYPES } from '../core/types';
 import { IUpload, IImageMeta } from '../models/upload.model';
 import { CreateUploadDto } from '../dtos/upload.dto';
 import logger from '../utils/logger';
+import { ErrorMessages } from '../enums/errorMessages.enum';
 
 @injectable()
 export class UploadService implements IUploadService {
@@ -56,7 +57,7 @@ export class UploadService implements IUploadService {
 
     const duplicate = await this.uploadRepository.findByUserIdAndSlug(userId, slug);
     if (duplicate) {
-        throw new Error('DUPLICATE_TITLE');
+        throw new Error(ErrorMessages.DUPLICATE_TITLE);
     }
 
     return await this.uploadRepository.create({
@@ -82,7 +83,7 @@ export class UploadService implements IUploadService {
     const existing = await this.uploadRepository.findById(id);
     const existingUserId = (existing?.userId as unknown as { _id: { toString(): string } })?._id?.toString() || existing?.userId?.toString();
     if (!existing || existingUserId !== userId) {
-      throw new Error('Forbidden or not found');
+      throw new Error(ErrorMessages.FORBIDDEN_OR_NOT_FOUND);
     }
 
     let updatedImages = [...(data.existingImages || [])];
@@ -127,7 +128,7 @@ export class UploadService implements IUploadService {
         // Check if this new slug is taken by ANOTHER upload by the same user
         const duplicate = await this.uploadRepository.findByUserIdAndSlug(userId, newSlug);
         if (duplicate && duplicate._id.toString() !== id) {
-            throw new Error('DUPLICATE_TITLE');
+            throw new Error(ErrorMessages.DUPLICATE_TITLE);
         }
         
         updateData.slug = newSlug;

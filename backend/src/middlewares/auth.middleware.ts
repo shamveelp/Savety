@@ -5,12 +5,14 @@ import { IJWTService } from '../interfaces/jwt.service.interface';
 import logger from '../utils/logger';
 
 import { RequestWithUser } from '../interfaces/request.interface';
+import { StatusCodes } from '../enums/statusCodes.enum';
+import { ErrorMessages } from '../enums/errorMessages.enum';
 
 export const authMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Authentication required. No token provided.' });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: ErrorMessages.AUTH_REQUIRED });
     }
 
     const token = authHeader.split(' ')[1];
@@ -18,14 +20,14 @@ export const authMiddleware = (req: RequestWithUser, res: Response, next: NextFu
     
     const decoded = jwtService.verifyToken(token);
     if (!decoded) {
-      return res.status(401).json({ message: 'Invalid or expired token.' });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: ErrorMessages.INVALID_TOKEN });
     }
 
     req.user = decoded as { id: string; email?: string; username?: string };
     next();
   } catch (error) {
     logger.error('Auth middleware error:', error);
-    res.status(401).json({ message: 'Unauthorized access.' });
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: ErrorMessages.UNAUTHORIZED_ACCESS });
   }
 };
 

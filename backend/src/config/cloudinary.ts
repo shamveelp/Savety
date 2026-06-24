@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import logger from '../utils/logger';
+import { ConstantMessages } from '../enums/constantMessages.enum';
 
 dotenv.config();
 
@@ -10,6 +11,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-logger.info(`Cloudinary Configured for Cloud: ${process.env.CLOUDINARY_CLOUD_NAME}`);
+logger.info(`${ConstantMessages.CLOUDINARY_CONFIGURED} ${process.env.CLOUDINARY_CLOUD_NAME}`);
 
 export default cloudinary;

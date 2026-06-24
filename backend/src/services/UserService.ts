@@ -4,6 +4,7 @@ import { IUserService } from '../interfaces/user.service.interface';
 import { IUserRepository } from '../interfaces/user.repository.interface';
 import { UpdateProfileRequestDTO, ChangePasswordRequestDTO, UserProfileResponseDTO } from '../dtos/user.dto';
 import { TYPES } from '../core/types';
+import { ErrorMessages } from '../enums/errorMessages.enum';
 
 @injectable()
 export class UserService implements IUserService {
@@ -13,7 +14,7 @@ export class UserService implements IUserService {
 
   async getProfile(userId: string): Promise<UserProfileResponseDTO> {
     const user = await this.userRepository.findById(userId);
-    if (!user) throw new Error('User not found.');
+    if (!user) throw new Error(ErrorMessages.USER_NOT_FOUND);
     
     return {
       id: (user as unknown as { _id: { toString(): string } })._id.toString(),
@@ -29,29 +30,29 @@ export class UserService implements IUserService {
     if (updateData.email) {
       const existing = await this.userRepository.findByEmail(updateData.email);
       if (existing && (existing as unknown as { _id: { toString(): string } })._id.toString() !== userId) {
-        throw new Error('Email already in use.');
+        throw new Error(ErrorMessages.EMAIL_IN_USE);
       }
     }
 
     const updatedUser = await this.userRepository.update(userId, updateData);
-    if (!updatedUser) throw new Error('Failed to update profile.');
+    if (!updatedUser) throw new Error(ErrorMessages.FAILED_TO_UPDATE_PROFILE);
 
     return this.getProfile(userId);
   }
 
   async updateAvatar(userId: string, imageUrl: string): Promise<UserProfileResponseDTO> {
     const updatedUser = await this.userRepository.update(userId, { profilePicture: imageUrl });
-    if (!updatedUser) throw new Error('Failed to update avatar.');
+    if (!updatedUser) throw new Error(ErrorMessages.FAILED_TO_UPDATE_AVATAR);
     
     return this.getProfile(userId);
   }
 
   async changePassword(userId: string, passwordData: ChangePasswordRequestDTO): Promise<void> {
     const user = await this.userRepository.findById(userId);
-    if (!user) throw new Error('User not found.');
+    if (!user) throw new Error(ErrorMessages.USER_NOT_FOUND);
 
     const isMatch = await bcrypt.compare(passwordData.oldPassword, user.password);
-    if (!isMatch) throw new Error('Invalid old password.');
+    if (!isMatch) throw new Error(ErrorMessages.INVALID_OLD_PASSWORD);
 
     const hashedPassword = await bcrypt.hash(passwordData.newPassword, 12);
     await this.userRepository.update(userId, { password: hashedPassword });

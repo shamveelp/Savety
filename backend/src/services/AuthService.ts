@@ -7,6 +7,7 @@ import { IMailService } from '../interfaces/mail.service.interface';
 import { IJWTService } from '../interfaces/jwt.service.interface';
 import { SignupRequestDTO, LoginRequestDTO, OTPVerifyRequestDTO, AuthResponseDTO, ResetPasswordRequestDTO } from '../dtos/auth.dto';
 import { TYPES } from '../core/types';
+import { ErrorMessages } from '../enums/errorMessages.enum';
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -19,12 +20,12 @@ export class AuthService implements IAuthService {
   async signup(signupData: SignupRequestDTO): Promise<void> {
     const existingEmail = await this.userRepository.findByEmail(signupData.email);
     if (existingEmail) {
-      throw new Error('Email already in use.');
+      throw new Error(ErrorMessages.EMAIL_IN_USE);
     }
 
     const existingUsername = await this.userRepository.findByUsername(signupData.username);
     if (existingUsername) {
-      throw new Error('Username already taken.');
+      throw new Error(ErrorMessages.USERNAME_TAKEN);
     }
 
     const hashedPassword = await bcrypt.hash(signupData.password, 12);
@@ -48,11 +49,11 @@ export class AuthService implements IAuthService {
     const user = await this.userRepository.findByEmail(verifyData.email);
     
     if (!user) {
-      throw new Error('User not found.');
+      throw new Error(ErrorMessages.USER_NOT_FOUND);
     }
 
     if (user.otp !== verifyData.otp || !user.otpExpires || user.otpExpires < new Date()) {
-      throw new Error('Invalid or expired OTP.');
+      throw new Error(ErrorMessages.INVALID_OTP);
     }
 
     const updatedUser = await this.userRepository.update((user as unknown as { _id: string })._id, { 
@@ -60,7 +61,7 @@ export class AuthService implements IAuthService {
       $unset: { otp: "", otpExpires: "" } 
     } as unknown as Partial<IUser>);
 
-    if (!updatedUser) throw new Error('Failed to update user verification status.');
+    if (!updatedUser) throw new Error(ErrorMessages.FAILED_VERIFICATION);
 
     const token = this.jwtService.generateToken({ id: (updatedUser as unknown as { _id: string })._id, email: updatedUser.email, username: updatedUser.username });
 
@@ -75,16 +76,16 @@ export class AuthService implements IAuthService {
   async login(loginData: LoginRequestDTO): Promise<AuthResponseDTO> {
     const user = await this.userRepository.findByEmail(loginData.email);
     if (!user) {
-      throw new Error('Invalid email or password.');
+      throw new Error(ErrorMessages.INVALID_EMAIL_PASSWORD);
     }
 
     if (!user.isVerified) {
-      throw new Error('Account not verified. Please check your email.');
+      throw new Error(ErrorMessages.ACCOUNT_NOT_VERIFIED);
     }
 
     const isMatch = await bcrypt.compare(loginData.password, user.password);
     if (!isMatch) {
-      throw new Error('Invalid email or password.');
+      throw new Error(ErrorMessages.INVALID_EMAIL_PASSWORD);
     }
 
     const token = this.jwtService.generateToken({ id: (user as unknown as { _id: string })._id, email: user.email, username: user.username });
@@ -100,7 +101,7 @@ export class AuthService implements IAuthService {
   async forgotPassword(email: string): Promise<void> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new Error('User with this email does not exist.');
+      throw new Error(ErrorMessages.USER_EMAIL_NOT_EXIST);
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -117,11 +118,11 @@ export class AuthService implements IAuthService {
   async resetPassword(resetData: ResetPasswordRequestDTO): Promise<void> {
     const user = await this.userRepository.findByEmail(resetData.email);
     if (!user) {
-      throw new Error('User not found.');
+      throw new Error(ErrorMessages.USER_NOT_FOUND);
     }
 
     if (user.otp !== resetData.otp || !user.otpExpires || user.otpExpires < new Date()) {
-      throw new Error('Invalid or expired OTP.');
+      throw new Error(ErrorMessages.INVALID_OTP);
     }
 
     const hashedPassword = await bcrypt.hash(resetData.newPassword, 12);

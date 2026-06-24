@@ -1,9 +1,7 @@
 import { IUser } from '../models/user.model';
+import { IBaseRepository } from './base.repository.interface';
 
-export interface IUserRepository {
-  create(userData: Partial<IUser>): Promise<IUser>;
-  findById(id: string): Promise<IUser | null>;
+export interface IUserRepository extends IBaseRepository<IUser> {
   findByEmail(email: string): Promise<IUser | null>;
   findByUsername(username: string): Promise<IUser | null>;
-  update(id: string, updateData: Partial<IUser>): Promise<IUser | null>;
 }

@@ -1,0 +1,16 @@
+export enum ConstantMessages {
+  SIGNUP_SUCCESS = 'Signup successful. Please check your email for verification OTP.',
+  OTP_VERIFIED = 'OTP verified successfully.',
+  LOGIN_SUCCESS = 'Login successful.',
+  RESET_OTP_SENT = 'Reset password OTP sent to your email.',
+  PASSWORD_RESET_SUCCESS = 'Password reset successful. You can now login.',
+  PASSWORD_UPDATED = 'Password updated successfully.',
+  MEMORIES_PRESERVED = 'Memories preserved successfully!',
+  MEMORY_REFINED = 'Memory refined successfully!',
+  MEMORY_REMOVED = 'Memory removed.',
+  SECURE_SHARING_ENABLED = 'Secure sharing enabled!',
+  SHARING_DISABLED = 'Sharing disabled.',
+  DB_CONNECTING = 'Attempting to connect to database...',
+  DB_CONNECTED = '🔥 Database connection established successfully!',
+  CLOUDINARY_CONFIGURED = 'Cloudinary Configured for Cloud:',
+}
